@@ -9,6 +9,11 @@ const date = value => new Date(value).toLocaleString('pt-BR', { dateStyle: 'shor
 let instrument, flow, interviews = [], current, view = 'home', dirty = false, saveTimer, locked = false, autosave;
 let syncView, recoverySnapshot;
 let onlineClient;
+function showSessionIdentity(session) {
+  const email = session?.user?.email || '';
+  $('#session-email').textContent = email;
+  $('#session-identity').hidden = !email;
+}
 let filter = { status: '', search: '', from: '', to: '', question: 'q4' };
 let saveMessage = 'Todas as alterações salvas';
 const selectedPrint = new Set();
@@ -121,8 +126,23 @@ function render() {
 }
 function renderHome() {
   const open = interviews.filter(i => i.status === 'in_progress').length;
-  main.innerHTML = `<section class="home-hero"><div class="hero-copy"><div class="eyebrow"><span class="tiny-line"></span> PESQUISA · UFRR</div><h1>Escutar com cuidado.<br><em>Registrar com precisão.</em></h1><p class="hero-description">Questionário de Pesquisa Biopsicossocial</p><p class="muted hero-support">Um espaço para conduzir a entrevista, registrar cada resposta e retomar de onde parou.</p><div class="hero-actions">${button('Iniciar nova entrevista <span aria-hidden="true">↗</span>', 'new')}${button('Continuar entrevista <span class="count">' + open + '</span>', 'resume', 'secondary')}</div><div class="hero-note"><span class="small-icon" aria-hidden="true">✓</span><span>Salvamento automático durante a entrevista</span></div></div><aside class="instrument-card"><div class="card-top"><span class="eyebrow">INSTRUMENTO DE PESQUISA</span><span class="document-icon" aria-hidden="true">▤</span></div><h2>Uma entrevista.<br>Sete dimensões.</h2><ol class="section-preview">${instrument.sections.map((s, n) => `<li><span>${String(n + 1).padStart(2, '0')}</span>${esc(s.title)}</li>`).join('')}</ol><div class="instrument-meta"><span>Q1 a Q53 + subquestões</span><span>Versão ${esc(instrument.version)}</span></div></aside></section><section class="home-bottom"><div class="panel-link"><div><div class="eyebrow">ACOMPANHAMENTO DA PESQUISA</div><h2>Os registros, em perspectiva.</h2><p class="muted">Consulte entrevistas, explore respostas e exporte os dados.</p></div>${button('Abrir painel <span aria-hidden="true">→</span>', 'dashboard', 'primary panel-button')}</div><div class="local-note"><strong>${storageInfo.provider === "supabase" ? "Conectado ao Supabase" : "Neste computador"}</strong><p>${storageInfo.provider === "supabase" ? "As entrevistas são salvas no projeto Supabase configurado para esta pesquisa." : "As entrevistas são salvas no banco local. O painel reúne os registros desta instalação."}</p></div></section>`;
+  main.innerHTML = `<section class="home-hero"><div class="hero-copy">
+    <div class="eyebrow"><span class="tiny-line"></span> PESQUISA DE MESTRADO · UFRR</div>
+    <p class="research-institution">Universidade Federal de Roraima<br>Centro de Ciências da Saúde</p>
+    <h1 class="research-title">Perfil epidemiológico do suicídio em Roraima <em>e seus fatores associados</em></h1>
+    <p class="hero-description">Questionário de Pesquisa Biopsicossocial</p>
+    <p class="muted hero-support">Instrumento de coleta de dados da pesquisa vinculada ao Programa de Pós-Graduação em Ciências da Saúde (PPG-PROCISA), na área de concentração Gestão de Sistemas de Saúde.</p>
+    <div class="research-credits">
+      <p><strong>Mestrando:</strong> Érico Macedo Gonçalves</p>
+      <p><strong>Orientadora:</strong> Profa. Dra. Bianca Jorge Sequeira</p>
+      <p class="research-location">Boa Vista – RR · 2026</p>
+    </div>
+    <div class="hero-actions">${button('Iniciar nova entrevista <span aria-hidden="true">↗</span>', 'new')}${button('Continuar entrevista <span class="count">' + open + '</span>', 'resume', 'secondary')}</div>
+    <div class="hero-note"><span class="small-icon" aria-hidden="true">✓</span><span>Salvamento automático durante a entrevista</span></div>
+  </div><aside class="instrument-card"><div class="card-top"><span class="eyebrow">INSTRUMENTO DE PESQUISA</span><span class="document-icon" aria-hidden="true">▤</span></div><h2>Coleta de dados.<br>Sete dimensões.</h2><ol class="section-preview">${instrument.sections.map((s, n) => `<li><span>${String(n + 1).padStart(2, '0')}</span>${esc(s.title)}</li>`).join('')}</ol><div class="instrument-meta"><span>Q1 a Q53 + subquestões</span><span>Versão ${esc(instrument.version)}</span></div></aside></section>
+  <section class="home-bottom"><div class="panel-link"><div><div class="eyebrow">ACOMPANHAMENTO DA PESQUISA</div><h2>Registros da pesquisa</h2><p class="muted">Consulte entrevistas, acompanhe as respostas e exporte os dados coletados.</p></div>${button('Abrir painel <span aria-hidden="true">→</span>', 'dashboard', 'primary panel-button')}</div><div class="local-note"><strong>${storageInfo.provider === 'supabase' ? 'Conectado ao Supabase' : 'Neste computador'}</strong><p>${storageInfo.provider === 'supabase' ? 'As entrevistas são salvas no projeto Supabase configurado para esta pesquisa.' : 'As entrevistas são salvas no banco local. O painel reúne os registros desta instalação.'}</p></div></section>`;
 }
+
 function interviewRows(rows, resume = false) {
   if (!rows.length) return `<div class="empty-state"><span aria-hidden="true">▤</span><h3>${resume ? 'Nenhuma entrevista em andamento' : 'Nenhum registro encontrado'}</h3><p>${resume ? 'As entrevistas iniciadas aparecerão aqui para você continuar.' : 'Inicie uma entrevista ou ajuste os filtros para visualizar os registros.'}</p></div>`;
   return `<div class="table-wrap"><table><thead><tr>${resume ? '' : '<th><input type="checkbox" id="print-all" aria-label="Selecionar todas as entrevistas filtradas para impressão"></th>'}<th>Entrevista</th><th>Aplicador</th><th>Iniciada em</th><th>Situação</th><th>Respostas</th><th>Ações</th></tr></thead><tbody>${rows.map(i => `<tr>${resume ? '' : `<td><input type="checkbox" data-print-id="${i.id}" aria-label="Selecionar ${esc(i.code)} para impressão" ${selectedPrint.has(i.id) ? 'checked' : ''}></td>`}<td><strong>${esc(i.code)}</strong><small>${esc(i.answers.q1?.value || '')}</small><small>${esc(flow[i.position]?.id === 'review' ? 'Revisão final' : flow[i.position]?.id.toUpperCase())}</small></td><td>${esc(i.interviewer || 'Não informado')}</td><td>${date(i.started_at)}</td><td><span class="status ${i.status}">${statusLabels[i.status]}</span></td><td>${countAnswers(i)} / ${applicableCount(i)}</td><td><div class="row-actions"><button class="row-link" data-action="${resume ? 'open' : 'read'}" data-id="${i.id}">${resume ? 'Continuar →' : 'Consultar →'}</button>${resume ? '' : `<button class="row-link" data-action="print" data-id="${i.id}">Imprimir</button>`}</div></td></tr>`).join('')}</tbody></table></div>`;
@@ -197,6 +217,7 @@ function answerText(q, a) {
   return parts.filter(Boolean).join('\n');
 }
 function renderLogin(message = '') {
+  showSessionIdentity(null);
   main.innerHTML = `<section class="login-card"><div class="eyebrow">PESQUISA · UFRR</div><h1>Acessar a pesquisa</h1><p>Entre com sua conta autorizada para aplicar o questionário e consultar as entrevistas.</p><form id="login-form"><label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Senha</span><input name="password" type="password" autocomplete="current-password" required></label><p id="login-error" class="login-error" role="alert">${esc(message)}</p><button class="button primary" type="submit">Entrar →</button></form><p class="login-help">Use a conta cadastrada pelo responsável pela pesquisa.</p></section>`;
 }
 function renderRead() {
@@ -325,7 +346,7 @@ async function action(name, el) {
   if (name === 'logout' && onlineClient) {
     if (dirty && !await flush()) return toast('Há respostas pendentes. Aguarde a sincronização antes de sair.');
     await onlineClient.signOut(); current = undefined; autosave = undefined; interviews = []; dirty = false;
-    $('#account-button').hidden = true; go('login'); return;
+    $('#account-button').hidden = true; showSessionIdentity(null); go('login'); return;
   }
   if (name === 'login' && onlineClient) { go('login'); return; }
   if (view === 'login' && onlineClient) return;
@@ -408,7 +429,7 @@ document.addEventListener('submit', event => {
     const form = event.target, submit = form.querySelector('button[type=submit]'), error = $('#login-error');
     submit.disabled = true; submit.textContent = 'Entrando…'; error.textContent = '';
     onlineClient.signIn(form.elements.email.value.trim(), form.elements.password.value)
-      .then(async () => { await refresh(); const account = $('#account-button'); account.hidden = false; account.dataset.action = 'logout'; account.textContent = 'Sair da conta'; go('home'); })
+      .then(async () => { await refresh(); showSessionIdentity(await onlineClient.session()); const account = $('#account-button'); account.hidden = false; account.dataset.action = 'logout'; account.textContent = 'Sair da conta'; go('home'); })
       .catch(e => { error.textContent = e.message; })
       .finally(() => { form.elements.password.value = ''; submit.disabled = false; submit.textContent = 'Entrar →'; });
     return;
@@ -445,9 +466,10 @@ try {
   flow = buildFlow(instrument);
   $('#footer-instrument').textContent = `Instrumento ${instrument.version} · ${storageInfo.label}`;
   $('.local-pill').innerHTML = `<i></i> ${esc(storageInfo.label)}`;
-  if (onlineClient && !await onlineClient.session()) go('login');
+  const session = onlineClient ? await onlineClient.session() : null;
+  if (onlineClient && !session) go('login');
   else {
-    if (onlineClient) { await onlineClient.checkAccess(); $('#account-button').hidden = false; }
+    if (onlineClient) { await onlineClient.checkAccess(); showSessionIdentity(session); $('#account-button').hidden = false; }
     await refresh(); render();
   }
 } catch (e) {

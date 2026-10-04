@@ -4,6 +4,23 @@ import fs from 'node:fs';
 import {PGlite} from '@electric-sql/pglite';
 import {flow} from '../server.mjs';
 
+test('SQL 004: lista de e-mails, reaplicação e rollback quando falta uma conta confirmada', async t => {
+  const pg = new PGlite(); t.after(()=>pg.close());
+  await pg.exec(`create schema auth; create table auth.users(email text,email_confirmed_at timestamptz);
+    create table public."Qest_access"(email text primary key,active boolean);
+    insert into auth.users values ('lucivaldobarroso.dev@gmail.com',now()),('macedogoncalves@hotmail.com',now());
+    insert into public."Qest_access" values ('anterior@example.test',true),('lucivaldobarroso.dev@gmail.com',false);`);
+  const sql=fs.readFileSync(new URL('../sql/004_Qest_autorizar_acesso.sql',import.meta.url),'utf8');
+  await pg.exec(sql); await pg.exec(sql);
+  let result=await pg.query('select * from public."Qest_access" order by email');
+  assert.equal(result.rows.length,3); assert.ok(result.rows.every(r=>r.active));
+  await pg.exec(`update auth.users set email_confirmed_at=null where email='macedogoncalves@hotmail.com';
+    update public."Qest_access" set active=false where email='lucivaldobarroso.dev@gmail.com';`);
+  await assert.rejects(()=>pg.exec(sql),/macedogoncalves@hotmail.com/);
+  result=await pg.query(`select active from public."Qest_access" where email='lucivaldobarroso.dev@gmail.com'`);
+  assert.equal(result.rows[0].active,false,'Nenhuma autorização parcial quando o lote falha');
+});
+
 test('Pages: acesso autenticado, isolamento de outros sites, validação no banco e transações', async t => {
   const pg = new PGlite(); t.after(()=>pg.close());
   await pg.exec(`create role anon; create role authenticated; create role service_role bypassrls;

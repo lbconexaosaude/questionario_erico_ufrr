@@ -113,7 +113,7 @@ export function createApp({ dbPath, store: suppliedStore } = {}) {
       }
       if (url.pathname.startsWith('/api/')) fail(404, 'Recurso não encontrado.');
       if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método não permitido.');
-      const files = { '/': 'index.html', '/app.js': 'app.js', '/flow.js': 'flow.js', '/autosave.js': 'autosave.js', '/style.css': 'style.css', '/questionnaire.json': 'questionnaire.json', '/favicon.svg': 'favicon.svg',
+      const files = { '/': 'index.html', '/app.js': 'app.js', '/flow.js': 'flow.js', '/autosave.js': 'autosave.js', '/style.css': 'style.css', '/questionnaire.json': 'questionnaire.json', '/favicon.svg': 'favicon.svg', '/brasao-ufrr.png': 'brasao-ufrr.png',
         '/lb-footer/footer.js': 'lb-footer/footer.js', '/lb-footer/footer.css': 'lb-footer/footer.css',
         '/lb-footer/logo.png': 'lb-footer/logo.png', '/lb-footer/apresentacao.mp4': 'lb-footer/apresentacao.mp4' };
       const name = files[url.pathname] || (url.pathname === '/hosting.json' ? 'hosting.json' : /^\/web\/[a-zA-Z0-9_-]+\.js$/.test(url.pathname) ? url.pathname.slice(1) : null);

@@ -7,10 +7,22 @@ A interface pública usa o mesmo questionário, navegação, impressão, exporta
 1. Os SQLs `001_Qest_supabase.sql` e `002_Qest_verificar.sql` já fazem parte da instalação local. Não apague tabelas nem entrevistas.
 2. No SQL Editor, execute inteiro **`sql/003_Qest_acesso_web.sql`**. Ele instala validação no banco, acesso autenticado e a lista própria de usuários autorizados. Todas as tabelas novas usam `Qest_`.
 3. Abra **Authentication → Users → Add user → Create new user**. Cadastre o e-mail e a senha que deseja usar e marque **Auto Confirm User**. Se essa conta já existir, use-a sem recriar ou alterar outras contas.
-4. Abra **`sql/004_Qest_autorizar_acesso.sql`**, substitua `SEU_EMAIL_AQUI` pelo e-mail cadastrado e execute no SQL Editor.
+4. Abra **`sql/004_Qest_autorizar_acesso.sql`**, confira os e-mails na lista `v_emails` e execute o arquivo inteiro no SQL Editor. Cada e-mail deve estar cadastrado e confirmado.
 5. Entre no site publicado com esse e-mail e senha.
 
 Para autorizar outra pessoa, repita os passos 3 e 4. Para revogar apenas o acesso à pesquisa, execute `update public."Qest_access" set active=false where email='EMAIL_DA_PESSOA';`. Isso não exclui a conta nem modifica os demais sites.
+
+Para acrescentar e-mails ao SQL 004, use uma linha por endereço, entre aspas simples, com vírgula entre os itens:
+
+```sql
+v_emails text[] := array[
+  'lucivaldobarroso.dev@gmail.com',
+  'macedogoncalves@hotmail.com',
+  'outro@email.com'
+];
+```
+
+Não coloque vírgula depois do último item. Não junte vários endereços dentro das mesmas aspas. Reexecutar o arquivo mantém os acessos anteriores e ativa os e-mails da lista sem duplicá-los. Se uma conta não estiver confirmada, o lote não é aplicado e a mensagem informa qual e-mail precisa ser conferido. Remover um e-mail da lista não revoga seu acesso; para isso, use `active=false` como descrito acima.
 
 ## Publicação no GitHub
 

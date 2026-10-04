@@ -106,11 +106,15 @@ try {
   await cdp('Page.navigate', { url: base + '/' + (onlineMode ? '?online=1' : '') });
   if(onlineMode) {
     await waitFor('!!document.querySelector("#login-form")');
+    assert.equal(await evaluate('document.querySelector("#session-identity").hidden'),true);
     await screenshot('pages-login');
     await input('[name="email"]','browser@example.test'); await input('[name="password"]','test-only-password');
     await evaluate('document.querySelector("#login-form").requestSubmit()');
   }
   await waitFor(`!!document.querySelector('[data-action="new"]')`);
+  if(onlineMode) assert.equal(await evaluate('document.querySelector("#session-email").textContent'),'browser@example.test');
+  assert.equal(await evaluate('document.querySelector(".university-crest").complete && document.querySelector(".university-crest").naturalWidth > 0'),true);
+  assert.match(await evaluate('document.querySelector(".research-credits").textContent'),/Bianca Jorge Sequeira/);
   await waitFor('document.querySelector("lb-dev-footer")?.shadowRoot?.querySelector("video")?.currentTime > 0');
   assert.equal(await evaluate('document.querySelector("lb-dev-footer").shadowRoot.querySelector("video").muted'), true);
   assert.equal(await evaluate('!!document.querySelector("lb-dev-footer").shadowRoot.querySelector("button, dialog")'), false);
@@ -128,6 +132,7 @@ try {
   assert.equal(await evaluate('window.footerEnds'), 5);
   await cdp('Page.reload');
   await waitFor('!!document.querySelector(".home-hero")');
+  if(onlineMode) assert.equal(await evaluate('document.querySelector("#session-email").textContent'),'browser@example.test');
   await waitFor('document.querySelector("lb-dev-footer")?.shadowRoot?.querySelector("video")?.currentTime > 0');
   assert.equal(await evaluate('document.querySelector("lb-dev-footer").shadowRoot.querySelector("video").paused'), false, 'Recarregar inicia outra sequência automaticamente');
   const mediaRange = await fetch(base + '/lb-footer/apresentacao.mp4', { headers: { Range: 'bytes=0-99' } });
@@ -366,6 +371,11 @@ try {
   console.log('OK: filtro por situação e exportações CSV/JSON com códigos e complementos.');
   console.log('OK: seis dados da consulta, rodapé responsivo e vídeo automático: cinco ciclos, parada e reinício ao recarregar.');
   console.log('Capturas: storage/qa/. Nenhuma resposta de teste no banco real.');
+  if(onlineMode) {
+    await click('[data-action="logout"]'); await waitFor('!!document.querySelector("#login-form")');
+    assert.equal(await evaluate('document.querySelector("#session-identity").hidden'),true);
+    assert.equal(await evaluate('document.querySelector("#session-email").textContent'),'');
+  }
   await cdp('Target.closeTarget', { targetId }, false);
 } finally {
   server.closeAllConnections();

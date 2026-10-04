@@ -2,6 +2,8 @@
 
 **Versão online:** GitHub Pages + Supabase, sem servidor local ligado. Instalação, login e publicação: [docs/PUBLICACAO.md](docs/PUBLICACAO.md).
 
+Pesquisa de mestrado: **Perfil epidemiológico do suicídio em Roraima e seus fatores associados**, de **Érico Macedo Gonçalves**, sob orientação da **Profa. Dra. Bianca Jorge Sequeira**. Universidade Federal de Roraima, Centro de Ciências da Saúde, Programa de Pós-Graduação em Ciências da Saúde (PPG-PROCISA), área de concentração Gestão de Sistemas de Saúde. Boa Vista – RR, 2026.
+
 Aplicação local para conduzir entrevistas, salvar respostas em SQLite, retomar registros e consultar um painel com filtros, distribuição de alternativas, impressão individual/em lote, importação Excel/CSV e exportação CSV/JSON.
 
 ## Executar
