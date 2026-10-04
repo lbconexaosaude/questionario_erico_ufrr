@@ -8,6 +8,7 @@ const statusLabels = { in_progress: 'Em andamento', completed: 'Concluída', int
 const date = value => new Date(value).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 let instrument, flow, interviews = [], current, view = 'home', dirty = false, saveTimer, locked = false, autosave;
 let syncView, recoverySnapshot;
+let onlineClient;
 let filter = { status: '', search: '', from: '', to: '', question: 'q4' };
 let saveMessage = 'Todas as alterações salvas';
 const selectedPrint = new Set();
@@ -26,7 +27,16 @@ const progress = interview => {
   return Math.round(Math.max(0, position) / (visible.length - 1) * 100);
 };
 async function api(url, options) {
-  const response = await fetch(url, { signal: AbortSignal.timeout(30_000), ...options, headers: { 'Content-Type': 'application/json', ...options?.headers } });
+  if (onlineClient && url.startsWith('/api/')) {
+    try { return await onlineClient.api(url, options); }
+    catch (error) {
+      if (error.status === 401 || error.status === 403) {
+        const account = $('#account-button'); account.hidden = false; account.dataset.action = 'login'; account.textContent = 'Entrar novamente';
+      }
+      throw error;
+    }
+  }
+  const response = await fetch(new URL('.' + url, import.meta.url), { signal: AbortSignal.timeout(30_000), ...options, headers: { 'Content-Type': 'application/json', ...options?.headers } });
   const data = await response.json();
   if (!response.ok) { const e = new Error(data.error || 'Não foi possível carregar os dados.'); e.status = response.status; throw e; }
   return data;
@@ -101,7 +111,8 @@ function go(name) { view = name; render(); main.focus(); window.scrollTo({ top: 
 function button(label, action, style = 'primary', extra = '') { return `<button class="button ${style}" data-action="${action}" ${extra}>${label}</button>`; }
 function breadcrumb(label) { return `<div class="breadcrumb"><button data-action="home">Início</button><span>/</span>${label}</div>`; }
 function render() {
-  if (view === 'home') renderHome();
+  if (view === 'login') renderLogin();
+  else if (view === 'home') renderHome();
   else if (view === 'resume') renderResume();
   else if (view === 'interview') renderInterview();
   else if (view === 'dashboard') renderDashboard();
@@ -185,6 +196,9 @@ function answerText(q, a) {
   for (const [key, label] of [['detail', 'Complemento'], ['religion', 'Religião'], ['regular', 'Frequentava regularmente'], ['frequency', 'Frequência semanal']]) if (a[key]) parts.push(`${label}: ${a[key]}`);
   return parts.filter(Boolean).join('\n');
 }
+function renderLogin(message = '') {
+  main.innerHTML = `<section class="login-card"><div class="eyebrow">PESQUISA · UFRR</div><h1>Acessar a pesquisa</h1><p>Entre com sua conta autorizada para aplicar o questionário e consultar as entrevistas.</p><form id="login-form"><label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Senha</span><input name="password" type="password" autocomplete="current-password" required></label><p id="login-error" class="login-error" role="alert">${esc(message)}</p><button class="button primary" type="submit">Entrar →</button></form><p class="login-help">Use a conta cadastrada pelo responsável pela pesquisa.</p></section>`;
+}
 function renderRead() {
   const metadata = [
     ['Nome', esc(current.answers.q1?.value || 'Não informado')],
@@ -226,7 +240,7 @@ async function printInterviews(ids) {
 function showImport() {
   importPreview = null;
   const dialog = $('#dialog'); dialog.classList.add('import-dialog');
-  dialog.innerHTML = `<form method="dialog"><div class="eyebrow">IMPORTAR ENTREVISTAS</div><h2>Importar do Excel</h2><p>Escolha um arquivo <strong>.xlsx ou .csv</strong>, com uma entrevista por linha. Confira a prévia antes de gravar. Registros com código já cadastrado serão ignorados.</p><p><a href="/api/import/template" download>Baixar modelo Excel com instruções ↓</a></p><label class="field"><span>Planilha (até 500 entrevistas / 5 MB)</span><input id="import-input" type="file" accept=".xlsx,.csv"></label><div class="dialog-actions"><button class="button secondary" value="cancel">Fechar</button>${button('Conferir planilha', 'import-file', 'primary', 'type="button"')}</div><div id="import-results" aria-live="polite"></div></form>`;
+  dialog.innerHTML = `<form method="dialog"><div class="eyebrow">IMPORTAR ENTREVISTAS</div><h2>Importar do Excel</h2><p>Escolha um arquivo <strong>.xlsx ou .csv</strong>, com uma entrevista por linha. Confira a prévia antes de gravar. Registros com código já cadastrado serão ignorados.</p><p><a href="./api/import/template" ${onlineClient ? 'data-action="import-template"' : 'download'}>Baixar modelo Excel com instruções ↓</a></p><label class="field"><span>Planilha (até 500 entrevistas / 5 MB)</span><input id="import-input" type="file" accept=".xlsx,.csv"></label><div class="dialog-actions"><button class="button secondary" value="cancel">Fechar</button>${button('Conferir planilha', 'import-file', 'primary', 'type="button"')}</div><div id="import-results" aria-live="polite"></div></form>`;
   dialog.addEventListener('close', () => { dialog.classList.remove('import-dialog'); importPreview = null; }, { once: true });
   dialog.showModal();
 }
@@ -308,6 +322,16 @@ function exportData(format) {
   download(name + '.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
 }
 async function action(name, el) {
+  if (name === 'logout' && onlineClient) {
+    if (dirty && !await flush()) return toast('Há respostas pendentes. Aguarde a sincronização antes de sair.');
+    await onlineClient.signOut(); current = undefined; autosave = undefined; interviews = []; dirty = false;
+    $('#account-button').hidden = true; go('login'); return;
+  }
+  if (name === 'login' && onlineClient) { go('login'); return; }
+  if (view === 'login' && onlineClient) return;
+  if (name === 'import-template' && onlineClient) {
+    download('modelo-entrevistas-ufrr.xlsx', await onlineClient.template(), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); return;
+  }
   if (view === 'interview' && ['previous', 'next', 'complete', 'exit', 'home'].includes(name)) {
     const numeric = $('input[type="number"]');
     if (numeric && !numeric.reportValidity()) return;
@@ -379,6 +403,16 @@ document.addEventListener('input', event => {
   }
 });
 document.addEventListener('submit', event => {
+  if (event.target.id === 'login-form') {
+    event.preventDefault();
+    const form = event.target, submit = form.querySelector('button[type=submit]'), error = $('#login-error');
+    submit.disabled = true; submit.textContent = 'Entrando…'; error.textContent = '';
+    onlineClient.signIn(form.elements.email.value.trim(), form.elements.password.value)
+      .then(async () => { await refresh(); const account = $('#account-button'); account.hidden = false; account.dataset.action = 'logout'; account.textContent = 'Sair da conta'; go('home'); })
+      .catch(e => { error.textContent = e.message; })
+      .finally(() => { form.elements.password.value = ''; submit.disabled = false; submit.textContent = 'Entrar →'; });
+    return;
+  }
   if (event.target.id !== 'filters') return;
   event.preventDefault();
   const values = Object.fromEntries(new FormData(event.target));
@@ -399,11 +433,24 @@ try {
   const zoom = Number(localStorage.getItem('ufrr.font') || 0); if (zoom >= -1 && zoom <= 3) { document.documentElement.dataset.zoom = zoom; document.documentElement.style.fontSize = `${100 + zoom * 10}%`; }
 } catch {}
 try {
-  const [data, config] = await Promise.all([api('/questionnaire.json'), api('/api/config')]);
-  instrument = data;
+  instrument = await api('/questionnaire.json');
+  const webMode = !['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) || new URLSearchParams(location.search).get('online') === '1';
+  if (webMode) {
+    const hosting = await fetch(new URL('./hosting.json', import.meta.url)).then(r => r.json());
+    const { createOnlineClient } = await import('./web/online.js');
+    onlineClient = createOnlineClient(hosting, instrument);
+  }
+  const config = await api('/api/config');
   storageInfo = config.storage;
   flow = buildFlow(instrument);
   $('#footer-instrument').textContent = `Instrumento ${instrument.version} · ${storageInfo.label}`;
   $('.local-pill').innerHTML = `<i></i> ${esc(storageInfo.label)}`;
-  await refresh(); render();
-} catch (e) { main.innerHTML = `<div class="empty-state"><h1>Não foi possível abrir o sistema</h1><p>${esc(e.message)}</p><p>Verifique se o servidor local está em execução e recarregue a página.</p></div>`; }
+  if (onlineClient && !await onlineClient.session()) go('login');
+  else {
+    if (onlineClient) { await onlineClient.checkAccess(); $('#account-button').hidden = false; }
+    await refresh(); render();
+  }
+} catch (e) {
+  if (onlineClient) { view = 'login'; renderLogin(e.message); }
+  else main.innerHTML = `<div class="empty-state"><h1>Não foi possível abrir o sistema</h1><p>${esc(e.message)}</p><p>Verifique a conexão e recarregue a página.</p></div>`;
+}

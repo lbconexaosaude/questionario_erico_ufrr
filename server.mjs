@@ -1,3 +1,4 @@
+import { validateAnswers as validateInstrumentAnswers } from './shared/validation.js';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,29 +15,7 @@ export const flow = buildFlow(instrument);
 const checkpointIndex = flow.findIndex(s => s.id === 'checkpoint');
 function fail(status, message) { const e = new Error(message); e.status = status; throw e; }
 
-export function validateAnswers(answers) {
-  if (!answers || typeof answers !== 'object' || Array.isArray(answers)) fail(400, 'Respostas inválidas.');
-  for (const [id, a] of Object.entries(answers)) {
-    const q = instrument.questions.find(q => q.id === id);
-    if (!q && !['opening', 'checkpoint'].includes(id)) fail(400, 'Questão desconhecida.');
-    if (!a || typeof a !== 'object' || Array.isArray(a)) fail(400, 'Formato de resposta inválido.');
-    if (Object.keys(a).some(k => !['value', 'detail', 'events', 'religion', 'regular', 'frequency'].includes(k))) fail(400, 'Campo de resposta desconhecido.');
-    for (const k of ['detail', 'religion', 'regular', 'frequency']) if (a[k] !== undefined && typeof a[k] !== 'string') fail(400, 'Complemento inválido.');
-    if (a.events !== undefined && (!Array.isArray(a.events) || a.events.some(v => !Number.isInteger(v) || v < 1 || v > 9))) fail(400, 'Eventos inválidos.');
-    if (a.value === undefined || a.value === null || a.value === '') continue;
-    const type = q?.type || 'single';
-    if (['single', 'events', 'religion'].includes(type)) {
-      const allowed = q ? q.options.map(o => o.value) : [0, 1];
-      if (!allowed.includes(a.value)) fail(400, 'Código de alternativa inválido.');
-    } else if (type === 'multiple') {
-      // Mantém compatibilidade com respostas escalares dos instrumentos anteriores.
-      if (['q20', 'q11.1', 'q19'].includes(id) && Number.isInteger(a.value) && q.options.some(o => o.value === a.value)) continue;
-      if (!Array.isArray(a.value) || a.value.some(v => !q.options.some(o => o.value === v))) fail(400, 'Alternativas inválidas.');
-    } else if (type === 'integer') {
-      if (!Number.isSafeInteger(a.value) || a.value < 0) fail(400, 'Informe um número inteiro não negativo.');
-    } else if (typeof a.value !== 'string') fail(400, 'Resposta textual inválida.');
-  }
-}
+export function validateAnswers(answers) { return validateInstrumentAnswers(answers, instrument); }
 
 export function createApp({ dbPath, store: suppliedStore } = {}) {
   const store = suppliedStore || (dbPath !== undefined ? createSQLiteStore(dbPath) : configuredStore());
@@ -137,8 +116,8 @@ export function createApp({ dbPath, store: suppliedStore } = {}) {
       const files = { '/': 'index.html', '/app.js': 'app.js', '/flow.js': 'flow.js', '/autosave.js': 'autosave.js', '/style.css': 'style.css', '/questionnaire.json': 'questionnaire.json', '/favicon.svg': 'favicon.svg',
         '/lb-footer/footer.js': 'lb-footer/footer.js', '/lb-footer/footer.css': 'lb-footer/footer.css',
         '/lb-footer/logo.png': 'lb-footer/logo.png', '/lb-footer/apresentacao.mp4': 'lb-footer/apresentacao.mp4' };
-      const name = files[url.pathname];
-      if (!name) fail(404, 'Página não encontrada.');
+      const name = files[url.pathname] || (url.pathname === '/hosting.json' ? 'hosting.json' : /^\/web\/[a-zA-Z0-9_-]+\.js$/.test(url.pathname) ? url.pathname.slice(1) : null);
+      if (!name || !fs.existsSync(path.join(root, 'public', name))) fail(404, 'Página não encontrada.');
       const mime = { html: 'text/html; charset=utf-8', js: 'text/javascript; charset=utf-8', css: 'text/css; charset=utf-8', json: 'application/json; charset=utf-8', svg: 'image/svg+xml', png: 'image/png', mp4: 'video/mp4' };
       if (name.endsWith('.mp4')) {
         const file = path.join(root, 'public', name), size = fs.statSync(file).size;

@@ -9,15 +9,20 @@
     "dev": "node --watch server.mjs",
     "instrument": "node scripts/build-instrument.mjs",
     "supabase:check": "node scripts/check-supabase.mjs",
-    "test": "node --test --test-isolation=none tests/*.test.mjs"
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "build:pages": "node scripts/build-pages.mjs",
+    "sql:web": "node scripts/build-web-sql.mjs"
   },
   "engines": {
     "node": ">=24.0.0"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "buffer": "^6.0.3",
     "exceljs": "4.4.0"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.5.8"
+    "@electric-sql/pglite": "0.5.8",
+    "esbuild": "^0.28.2"
   }
 }

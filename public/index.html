@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Aplicação e registro do Questionário de Pesquisa Biopsicossocial — pesquisa Érico / UFRR.">
     <title>Pesquisa Biopsicossocial · UFRR</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/style.css">
-    <script type="module" src="/app.js"></script>
-    <script type="module" src="/lb-footer/footer.js"></script>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./lb-footer/footer.js"></script>
   </head>
   <body>
     <a href="#main" class="skip">Ir para o conteúdo</a>
@@ -22,6 +22,7 @@
       <lb-dev-footer></lb-dev-footer>
     </div>
     <div id="toast" role="status" aria-live="polite"></div>
+    <button id="account-button" class="account-button" data-action="logout" hidden>Sair da conta</button>
     <dialog id="dialog"></dialog>
     <dialog id="sync-dialog" class="sync-dialog" aria-labelledby="sync-title" aria-describedby="sync-description">
       <div class="sync-spinner" aria-hidden="true"></div>

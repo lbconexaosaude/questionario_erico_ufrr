@@ -4,21 +4,70 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ExcelJS from 'exceljs';
 import { createApp, flow } from '../server.mjs';
+import { createSQLiteStore } from '../lib/sqlite-store.mjs';
 
-const server = createApp({ dbPath: ':memory:' });
+const testStore = createSQLiteStore(':memory:');
+const server = createApp({ store: testStore });
+const onlineMode = process.env.BROWSER_ONLINE === '1';
+// Simula a subpasta do GitHub Pages sem tocar no servidor ou banco reais.
+const mountPath = process.env.BROWSER_BASE_PATH || '';
+if (mountPath) {
+  if (!/^\/[a-zA-Z0-9_-]+$/.test(mountPath)) throw new Error('BROWSER_BASE_PATH inválido');
+  const handler = server.listeners('request')[0];
+  server.removeAllListeners('request');
+  server.on('request', (req, res) => {
+    if (!req.url.startsWith(mountPath + '/')) { res.writeHead(404); return res.end(); }
+    req.url = req.url.slice(mountPath.length);
+    return handler(req, res);
+  });
+}
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-const base = `http://127.0.0.1:${server.address().port}`;
+const base = `http://127.0.0.1:${server.address().port}${mountPath}`;
 const browser = await fetch('http://127.0.0.1:9223/json/version').then(r => r.json());
 const socket = new WebSocket(browser.webSocketDebuggerUrl);
 await new Promise(resolve => socket.addEventListener('open', resolve, { once: true }));
 const pending = new Map(), errors = [];
-let sequence = 0, sessionId;
+let sequence = 0, sessionId, slowRead = false;
+const testToken = 'eyJhbGciOiJub25lIn0.' + Buffer.from(JSON.stringify({sub:'11111111-1111-1111-1111-111111111111',role:'authenticated',exp:Math.floor(Date.now()/1000)+3600})).toString('base64url') + '.test';
+async function fulfillOnline(params) {
+  const request = params.request, url = new URL(request.url);
+  let status = 200, body;
+  const payload = request.postData ? JSON.parse(request.postData) : {};
+  if(process.env.BROWSER_DEBUG) console.log('Mock Supabase:',request.method,url.pathname,payload.p_operation||'');
+  if (request.method === 'OPTIONS') body = {};
+  else if (url.pathname.startsWith('/auth/v1/token')) {
+    body = {access_token:testToken,refresh_token:'test-refresh',token_type:'bearer',expires_in:3600,user:{id:'11111111-1111-1111-1111-111111111111',email:'browser@example.test',aud:'authenticated',role:'authenticated'}};
+  } else if(url.pathname.startsWith('/auth/v1/logout')) body = {};
+  else if(url.pathname === '/rest/v1/rpc/Qest_web') {
+    const op=payload.p_operation, p=payload.p_payload;
+    try {
+      if(op==='health') body={schema_version:2};
+      else if(op==='list') {
+        const rows=(await testStore.list()).sort((a,b)=>a.id.localeCompare(b.id));
+        body=rows.filter(r=>!p.after||r.id>p.after).slice(0,p.limit||200);
+      } else if(op==='get') { if(slowRead) await new Promise(r=>setTimeout(r,700)); body=await testStore.get(p.id); }
+      else if(op==='duplicates') body=await testStore.findDuplicates(p.rows);
+      else if(op==='import') body=await testStore.importRows(p.rows);
+      else {
+        const response=await fetch(base+'/api/interviews'+(op==='save'?'/'+p.id:''),{method:op==='save'?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+        body=await response.json();
+        if(!response.ok) {status=response.status;body={code:'PT'+status,message:'Test error'};}
+      }
+    } catch(e) { status=e.status||400; body={code:'PT'+status,message:'Test error'}; }
+  } else {status=404;body={message:'Unexpected test request'};}
+  await cdp('Fetch.fulfillRequest',{requestId:params.requestId,responseCode:status,responseHeaders:[
+    {name:'Content-Type',value:'application/json'}, {name:'Access-Control-Allow-Origin',value:'*'},
+    {name:'Access-Control-Allow-Headers',value:Object.entries(request.headers).find(([k])=>k.toLowerCase()==='access-control-request-headers')?.[1] || 'authorization,apikey,content-type,content-profile,accept-profile,prefer,x-client-info,x-supabase-api-version'}, {name:'Access-Control-Allow-Methods',value:'GET,POST,OPTIONS'},
+  ],body:Buffer.from(JSON.stringify(body)).toString('base64')});
+}
 socket.addEventListener('message', event => {
   const data = JSON.parse(event.data);
   if (data.id) {
     const task = pending.get(data.id); if (!task) return;
     pending.delete(data.id); data.error ? task.reject(new Error(JSON.stringify(data.error))) : task.resolve(data.result);
   } else if (data.method === 'Runtime.exceptionThrown') errors.push(data.params.exceptionDetails.text + ': ' + data.params.exceptionDetails.exception?.description);
+  else if (data.method === 'Fetch.requestPaused') fulfillOnline(data.params).catch(e=>errors.push(e.message));
+  else if (data.method === 'Network.loadingFailed' && process.env.BROWSER_DEBUG) console.log('Network:',data.params.errorText,data.params.corsErrorStatus);
 });
 function cdp(method, params = {}, useSession = true) {
   const id = ++sequence;
@@ -48,8 +97,19 @@ try {
   const { targetId } = await cdp('Target.createTarget', { url: 'about:blank' }, false);
   ({ sessionId } = await cdp('Target.attachToTarget', { targetId, flatten: true }, false));
   await cdp('Runtime.enable'); await cdp('Page.enable');
+  if(onlineMode) {
+    await cdp('Network.enable');
+    await cdp('Page.setBypassCSP',{enabled:true});
+    await cdp('Fetch.enable',{patterns:[{urlPattern:'https://*.supabase.co/*'}]});
+  }
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1050, deviceScaleFactor: 1, mobile: false });
-  await cdp('Page.navigate', { url: base });
+  await cdp('Page.navigate', { url: base + '/' + (onlineMode ? '?online=1' : '') });
+  if(onlineMode) {
+    await waitFor('!!document.querySelector("#login-form")');
+    await screenshot('pages-login');
+    await input('[name="email"]','browser@example.test'); await input('[name="password"]','test-only-password');
+    await evaluate('document.querySelector("#login-form").requestSubmit()');
+  }
   await waitFor(`!!document.querySelector('[data-action="new"]')`);
   await waitFor('document.querySelector("lb-dev-footer")?.shadowRoot?.querySelector("video")?.currentTime > 0');
   assert.equal(await evaluate('document.querySelector("lb-dev-footer").shadowRoot.querySelector("video").muted'), true);
@@ -273,6 +333,7 @@ try {
       answers: { ...syncingInterview.answers, q13: { value: 'Outra sessão' }, q2: { value: 68 } } }),
   });
   assert.equal(remoteResponse.status, 200);
+  slowRead = true;
   await evaluate(`(() => {
     const original = window.fetch; window.restoreFetch = () => { window.fetch = original; };
     window.fetch = async (...args) => {
@@ -292,6 +353,7 @@ try {
   assert.equal(await evaluate('Math.abs(window.scrollY - window.beforeSyncScroll) < 2'), true);
   assert.equal(await evaluate('!!document.querySelector("[data-action=reload]")'), false);
   await evaluate('window.restoreFetch()');
+  slowRead = false;
   const synced = await fetch(base + '/api/interviews/' + syncingInterview.id).then(r => r.json());
   assert.equal(synced.answers.q13.value, 'Minha edição pendente'); assert.equal(synced.answers.q2.value, 68);
   // O preenchimento continua normalmente depois do fechamento automático.

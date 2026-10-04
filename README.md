@@ -1,5 +1,7 @@
 # Questionário de Pesquisa Biopsicossocial — Érico / UFRR
 
+**Versão online:** GitHub Pages + Supabase, sem servidor local ligado. Instalação, login e publicação: [docs/PUBLICACAO.md](docs/PUBLICACAO.md).
+
 Aplicação local para conduzir entrevistas, salvar respostas em SQLite, retomar registros e consultar um painel com filtros, distribuição de alternativas, impressão individual/em lote, importação Excel/CSV e exportação CSV/JSON.
 
 ## Executar

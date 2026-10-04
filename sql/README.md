@@ -2,6 +2,8 @@
 
 Todos os SQLs desta integração ficam nesta pasta. Nenhum deve ser executado no SQLite.
 
+Para usar **GitHub Pages + Supabase**, execute também `003_Qest_acesso_web.sql` e configure a conta com `004_Qest_autorizar_acesso.sql`. Veja [o guia de publicação](../docs/PUBLICACAO.md). O acesso local por Node.js permanece disponível. A função nova `Qest_web` só atende contas confirmadas e autorizadas em `Qest_access`; a função antiga `Qest_store` continua exclusiva do servidor.
+
 ## 1. Executar no projeto Supabase existente
 
 No **SQL Editor**, abra uma nova consulta e execute, nesta ordem:
