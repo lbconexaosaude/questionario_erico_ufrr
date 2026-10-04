@@ -91,4 +91,13 @@
   #print-area .read-section p{font-size:11pt;line-height:1.6;color:#000;margin:0 0 6px;overflow-wrap:anywhere}
   #print-area .read-section .skipped-label{font-size:9pt;color:#333;font-style:italic}
 }
+.header-actions{gap:18px;flex-wrap:wrap}.manual-button{min-height:40px;padding:9px 14px;font-size:.76rem;white-space:nowrap;border-color:var(--brand);color:var(--brand);background:#edf3ef}
+.manual-dialog{width:min(820px,calc(100% - 28px));max-width:none;max-height:88vh;max-height:88dvh;padding:0;color:var(--ink);overscroll-behavior:contain}
+.manual-heading{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 28px;background:#edf3ef;border-bottom:1px solid var(--line)}
+.manual-heading h2{margin:5px 0 0}.manual-heading form{flex-shrink:0}.manual-content{padding:24px 28px 28px;font-size:.94rem;line-height:1.7}.manual-content p{font-size:inherit;color:var(--ink)}
+.manual-shortcut{background:#edf3ef;border-left:3px solid var(--brand);padding:16px;border-radius:4px}
+.manual-content details{border:1px solid var(--line);border-radius:8px;margin:12px 0;background:#fff;overflow:clip}.manual-content summary{cursor:pointer;padding:17px 18px;font-weight:650;line-height:1.5;color:var(--brand)}.manual-content summary:hover{background:#f0f5f1}.manual-content summary:focus-visible{outline-offset:-4px}.manual-content details[open] summary{border-bottom:1px solid var(--line);background:#f0f5f1}.manual-content details>div{padding:6px 20px 8px}.manual-content ol,.manual-content ul{padding-left:22px}.manual-content li{margin:12px 0}.manual-end{margin:24px 0 16px}
+body:has(#manual-dialog[open]){overflow:hidden}
+@media(max-width:950px){.site-header{height:auto;min-height:106px;padding-top:18px;padding-bottom:18px;flex-wrap:wrap;gap:18px}.header-actions{gap:12px}.local-pill{display:inline-block}}
+@media(max-width:700px){.header-actions{width:100%;justify-content:space-between;gap:10px}.local-pill{font-size:.66rem}.manual-button{font-size:.72rem;padding:9px 11px}.manual-heading{padding:16px}.manual-heading h2{font-size:1.3rem}.manual-heading .button{padding:10px;min-height:44px}.manual-content{padding:18px 16px;font-size:.9rem}.manual-content details>div{padding:4px 14px 8px}.manual-content summary{padding:15px 14px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}

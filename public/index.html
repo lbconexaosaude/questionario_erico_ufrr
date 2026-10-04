@@ -14,7 +14,7 @@
     <a href="#main" class="skip">Ir para o conteúdo</a>
     <header class="site-header">
       <a href="#home" class="brand" aria-label="Pesquisa UFRR — início"><img class="university-crest" src="./brasao-ufrr.png" alt="Brasão da Universidade Federal de Roraima" width="56" height="56"><span><strong>UFRR <span class="brand-divider">/</span> Pesquisa</strong><small>PPG-PROCISA · CIÊNCIAS DA SAÚDE</small></span></a>
-      <div class="header-actions"><span class="local-pill"><i></i> Ambiente local</span><div class="font-controls" aria-label="Tamanho do texto"><button data-font="-1" aria-label="Diminuir texto">A−</button><button data-font="0" aria-label="Tamanho padrão">A</button><button data-font="1" aria-label="Aumentar texto">A+</button></div></div>
+      <div class="header-actions"><button type="button" class="button secondary manual-button" data-action="manual" aria-haspopup="dialog" aria-controls="manual-dialog">Manual de uso</button><span class="local-pill"><i></i> Ambiente local</span><div class="font-controls" aria-label="Tamanho do texto"><button data-font="-1" aria-label="Diminuir texto">A−</button><button data-font="0" aria-label="Tamanho padrão">A</button><button data-font="1" aria-label="Aumentar texto">A+</button></div></div>
     </header>
     <div id="session-identity" class="session-identity" hidden><span>Conectado como</span> <strong id="session-email"></strong></div>
     <main id="main" tabindex="-1"><div class="loading">Carregando o questionário…</div></main>
@@ -25,6 +25,59 @@
     <div id="toast" role="status" aria-live="polite"></div>
     <button id="account-button" class="account-button" data-action="logout" hidden>Sair da conta</button>
     <dialog id="dialog"></dialog>
+    <dialog id="manual-dialog" class="manual-dialog" aria-labelledby="manual-title" aria-describedby="manual-intro">
+      <div class="manual-heading"><div><div class="eyebrow">PESQUISA · UFRR</div><h2 id="manual-title" tabindex="-1" autofocus>Manual de uso</h2></div><form method="dialog"><button class="button secondary" aria-label="Fechar manual de uso">Fechar ×</button></form></div>
+      <div class="manual-content">
+        <p id="manual-intro">Um guia para aplicar entrevistas e consultar os resultados. Toque ou clique em um assunto para ler o passo a passo. Ao fechar o manual, você volta à mesma tela.</p>
+        <p class="manual-shortcut"><strong>Para começar:</strong> entre com sua conta → inicie uma entrevista → preencha e revise → consulte os registros no painel.</p>
+        <details open><summary>1. Entrar e conhecer a página inicial</summary><div>
+          <ol><li>Na tela <strong>Acessar a pesquisa</strong>, informe seu e-mail e sua senha e clique em <strong>Entrar</strong>. Use uma conta cadastrada e autorizada pelo responsável pela pesquisa.</li><li>Confira seu e-mail no alto da página. A página inicial apresenta o título da pesquisa, o mestrando, a orientadora e os sete blocos do questionário.</li><li>Escolha <strong>Iniciar nova entrevista</strong>, <strong>Continuar entrevista</strong> ou <strong>Abrir painel</strong>, conforme o que deseja fazer.</li></ol>
+          <p><strong>Banco Supabase</strong> indica onde os registros são armazenados. Na versão online, use uma conexão com a internet. Se o acesso não for autorizado ou você não souber a senha, procure o responsável pela pesquisa.</p>
+        </div></details>
+        <details><summary>2. Iniciar uma entrevista</summary><div>
+          <ol><li>Clique em <strong>Iniciar nova entrevista</strong>.</li><li>Informe o nome ou código do <strong>Aplicador</strong>, a pessoa que conduz a entrevista. Esse campo é opcional, mas ajuda a localizar o registro depois.</li><li>Clique em <strong>Iniciar entrevista</strong>. O código da entrevista, a data e o horário são registrados automaticamente.</li><li>Leia a pergunta de abertura e marque a resposta da pessoa entrevistada. Para continuar, é necessário responder <strong>Sim</strong> e clicar em <strong>Próxima</strong>.</li></ol>
+          <p>Na abertura e na pausa intermediária, a resposta <strong>Não</strong> leva a uma confirmação de interrupção ao avançar. Se confirmar, as respostas já registradas ficam preservadas.</p>
+        </div></details>
+        <details><summary>3. Preencher as perguntas</summary><div>
+          <ol><li>Em cada bloco, clique em <strong>Começar bloco</strong>. Leia a pergunta e marque a alternativa ou escreva a resposta no campo indicado.</li><li>Quando aparecer <strong>Você pode selecionar mais de uma alternativa</strong>, marque todas as opções necessárias. Preencha os complementos quando forem solicitados.</li><li>Use <strong>Próxima</strong> para avançar e <strong>Anterior</strong> para voltar. O sistema mostra ou pula perguntas automaticamente, conforme as respostas anteriores.</li><li>Use <strong>Limpar resposta</strong> se quiser retirar o preenchimento da pergunta atual. As perguntas comuns podem ficar em branco.</li></ol>
+          <p><strong>Texto integral do instrumento</strong> abre a redação completa da pergunta. <strong>Visão da entrevista · 7 blocos</strong> mostra a organização do questionário. A barra de progresso indica o percurso, não a quantidade de respostas preenchidas.</p>
+          <p>Se uma resposta anterior mudar e uma pergunta passar a ser pulada, o que já foi preenchido nela permanece preservado e identificado na consulta.</p>
+        </div></details>
+        <details><summary>4. Salvar, pausar e continuar depois</summary><div>
+          <ol><li>As respostas são salvas automaticamente. Acompanhe a mensagem de salvamento junto aos botões de navegação.</li><li>Para parar por enquanto, clique em <strong>Salvar e sair</strong> e aguarde a confirmação.</li><li>Ao voltar à página inicial, clique em <strong>Continuar entrevista</strong>. Localize o código e escolha <strong>Continuar</strong> para retomar de onde parou.</li></ol>
+          <p><strong>Salvar e sair</strong> mantém a entrevista em andamento. Já a interrupção confirmada na abertura ou na pausa intermediária encerra o registro, que passa a ser somente para consulta.</p>
+          <p>Se aparecer <strong>Atualizando respostas…</strong>, aguarde: o sistema sincroniza e retorna ao preenchimento automaticamente. Se houver alterações pendentes por falha de conexão, mantenha a aba aberta e aguarde o salvamento antes de fechá-la.</p>
+        </div></details>
+        <details><summary>5. Revisar e concluir</summary><div>
+          <ol><li>Ao chegar à <strong>Revisão final</strong>, confira os blocos e a quantidade de perguntas preenchidas, em branco e puladas.</li><li>Para conferir ou corrigir um bloco, clique em <strong>Revisar</strong>. Depois, avance novamente até a revisão final.</li><li>Clique em <strong>Concluir entrevista</strong> e confirme quando tiver terminado.</li></ol>
+          <p>Após a conclusão, a entrevista fica disponível somente para leitura. Você poderá consultar, imprimir e exportar, mas não alterar as respostas. Respostas comuns em branco não impedem a conclusão.</p>
+        </div></details>
+        <details><summary>6. Abrir o painel e pesquisar entrevistas</summary><div>
+          <ol><li>Na página inicial, clique em <strong>Abrir painel</strong>.</li><li>Em <strong>Buscar entrevista ou aplicador</strong>, digite o código da entrevista ou o nome do aplicador. Esse campo não pesquisa pelo nome da pessoa informado na Q1.</li><li>Se desejar, escolha a <strong>Situação</strong> e as datas de <strong>Início do período</strong> e <strong>Fim do período</strong>. As datas consideram quando a entrevista foi iniciada.</li><li>Clique em <strong>Filtrar</strong>. Os totais, o gráfico e a lista passam a considerar esses filtros.</li><li>Para ver todos os registros novamente, apague a busca e as datas, escolha <strong>Todas as situações</strong> e clique em <strong>Filtrar</strong>.</li></ol>
+          <p>Os cartões mostram o total de entrevistas, as concluídas, as em andamento e as interrompidas. No quadro <strong>O que os registros mostram</strong>, escolha uma <strong>Questão</strong> para ver a distribuição das alternativas. Em perguntas com várias escolhas, os percentuais podem somar mais de 100%.</p>
+        </div></details>
+        <details><summary>7. Consultar uma entrevista</summary><div>
+          <ol><li>Na lista do painel, localize a entrevista e clique em <strong>Consultar</strong>.</li><li>Confira <strong>Nome, Aplicador, Início, Encerramento, Situação e Instrumento</strong>. Instrumento informa a versão do questionário usada naquele registro.</li><li>Role a página para ler as respostas organizadas por bloco. As perguntas puladas e as que ficaram sem resposta são identificadas.</li><li>Use <strong>Voltar ao painel</strong> para retornar à lista. Se o registro estiver em andamento, você também poderá usar <strong>Continuar entrevista</strong>.</li></ol>
+        </div></details>
+        <details><summary>8. Imprimir ou salvar em PDF</summary><div>
+          <ol><li><strong>Uma entrevista:</strong> no painel, clique em <strong>Imprimir</strong> na linha do registro. Você também pode abrir a consulta e clicar em <strong>Imprimir / PDF</strong>.</li><li><strong>Várias entrevistas:</strong> marque as caixas à esquerda das linhas e clique em <strong>Imprimir selecionadas</strong>. A caixa no cabeçalho da tabela seleciona todas as entrevistas dos filtros atuais.</li><li>Na janela de impressão do navegador, escolha uma impressora ou <strong>Salvar como PDF</strong>.</li><li>Confira a prévia e confirme a impressão ou escolha onde salvar o arquivo.</li></ol>
+          <p>Na impressão em lote, cada entrevista começa em uma nova página. Somente as selecionadas que aparecem nos filtros atuais entram no lote. Imprimir não altera os registros.</p>
+        </div></details>
+        <details><summary>9. Exportar os dados</summary><div>
+          <ol><li>No painel, aplique os filtros desejados. Para exportar tudo, deixe os campos de busca e datas vazios e selecione <strong>Todas as situações</strong>.</li><li>Clique em <strong>Exportar CSV</strong> para baixar um arquivo que pode ser aberto em planilhas, como o Excel. Algumas respostas aparecem com códigos e campos agrupados; para leitura individual, prefira a consulta ou o PDF.</li><li>Use <strong>Exportar JSON</strong> quando precisar do arquivo estruturado dos registros para tratamento dos dados.</li></ol>
+          <p>A exportação segue os filtros, não as caixas marcadas para impressão. Os arquivos contêm respostas identificáveis: guarde-os no local definido pela equipe de pesquisa. O site permite reimportar CSV; a importação de JSON não está disponível.</p>
+        </div></details>
+        <details><summary>10. Importar entrevistas do Excel ou CSV</summary><div>
+          <ol><li>No painel, clique em <strong>Importar Excel</strong> e depois em <strong>Baixar modelo Excel com instruções</strong>.</li><li>Abra o modelo, leia a aba <strong>Instruções</strong> e preencha a aba <strong>Entrevistas</strong>, com uma entrevista por linha. Mantenha os nomes das colunas e use os códigos indicados. Nas múltiplas escolhas, separe os códigos por vírgula.</li><li>Salve em <strong>.xlsx</strong> ou <strong>.csv</strong>. São aceitas até <strong>500 entrevistas e 5 MB</strong> por arquivo. Se o arquivo for .xls, salve-o como .xlsx no Excel.</li><li>Selecione o arquivo no site e clique em <strong>Conferir planilha</strong>.</li><li>Confira as novas entrevistas, as duplicadas e os erros. Se houver erros, corrija as linhas indicadas e selecione o arquivo novamente.</li><li>Quando estiver tudo certo, clique em <strong>Importar</strong> para gravar as novas entrevistas.</li></ol>
+          <p>A conferência não grava dados. Registros identificados como duplicados são ignorados, sem substituir os existentes. O CSV exportado pelo próprio site também pode ser importado.</p>
+        </div></details>
+        <details><summary>11. Ajustar a leitura, sair e resolver dúvidas</summary><div>
+          <ul><li><strong>Texto pequeno:</strong> use <strong>A+</strong> no alto da página para aumentar, <strong>A−</strong> para diminuir e <strong>A</strong> para voltar ao tamanho padrão.</li><li><strong>Voltar ao início:</strong> clique no brasão/nome da UFRR no cabeçalho ou em <strong>Início</strong>, quando disponível.</li><li><strong>Encerrar seu acesso:</strong> aguarde as respostas serem salvas e clique em <strong>Sair da conta</strong>, no canto inferior direito.</li><li><strong>Não encontrou uma entrevista:</strong> confira os filtros, o código e a conta utilizada. Procure pelo código ou pelo aplicador.</li><li><strong>Outra sessão já encerrou a entrevista:</strong> o registro fica somente para consulta. Se houver uma <strong>cópia pendente</strong> disponível, baixe-a e peça ajuda ao responsável para conferir as alterações não enviadas.</li><li><strong>Dúvida sobre uma pergunta da pesquisa:</strong> consulte o texto integral do instrumento e a equipe responsável.</li></ul>
+        </div></details>
+        <p class="manual-end">Você pode abrir este manual sempre que precisar, inclusive durante o preenchimento.</p>
+        <form method="dialog"><button class="button primary">Fechar manual e voltar</button></form>
+      </div>
+    </dialog>
     <dialog id="sync-dialog" class="sync-dialog" aria-labelledby="sync-title" aria-describedby="sync-description">
       <div class="sync-spinner" aria-hidden="true"></div>
       <h2 id="sync-title">Atualizando respostas…</h2>

@@ -343,6 +343,7 @@ function exportData(format) {
   download(name + '.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
 }
 async function action(name, el) {
+  if (name === 'manual') { $('#manual-dialog').showModal(); return; }
   if (name === 'logout' && onlineClient) {
     if (dirty && !await flush()) return toast('Há respostas pendentes. Aguarde a sincronização antes de sair.');
     await onlineClient.signOut(); current = undefined; autosave = undefined; interviews = []; dirty = false;
@@ -449,6 +450,7 @@ document.addEventListener('change', event => {
 window.addEventListener('online', () => { if (dirty) flush(); });
 window.addEventListener('beforeunload', event => { if (dirty) { pendingStore(); event.preventDefault(); event.returnValue = ''; } });
 $('#sync-dialog').addEventListener('cancel', event => event.preventDefault());
+$('#manual-dialog').addEventListener('close', () => $('[data-action="manual"]').focus({ preventScroll: true }));
 setInterval(() => { if (dirty && !autosave?.saving) flush(); }, 5000);
 try {
   const zoom = Number(localStorage.getItem('ufrr.font') || 0); if (zoom >= -1 && zoom <= 3) { document.documentElement.dataset.zoom = zoom; document.documentElement.style.fontSize = `${100 + zoom * 10}%`; }
