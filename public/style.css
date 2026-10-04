@@ -91,6 +91,7 @@
   #print-area .read-section p{font-size:11pt;line-height:1.6;color:#000;margin:0 0 6px;overflow-wrap:anywhere}
   #print-area .read-section .skipped-label{font-size:9pt;color:#333;font-style:italic}
 }
+.creation-account{min-width:180px;max-width:245px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}.creation-account .muted{font-size:.75rem}
 .header-actions{gap:18px;flex-wrap:wrap}.manual-button{min-height:40px;padding:9px 14px;font-size:.76rem;white-space:nowrap;border-color:var(--brand);color:var(--brand);background:#edf3ef}
 .manual-dialog{width:min(820px,calc(100% - 28px));max-width:none;max-height:88vh;max-height:88dvh;padding:0;color:var(--ink);overscroll-behavior:contain}
 .manual-heading{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 28px;background:#edf3ef;border-bottom:1px solid var(--line)}

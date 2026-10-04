@@ -21,6 +21,8 @@ O segundo arquivo deve retornar:
 
 ## Tabelas e isolamento
 
+Para mostrar a **Conta de acesso** no painel, execute também **`005_Qest_conta_da_entrevista.sql`** após 001 e 003. O resultado deve ser `registro_de_conta_instalado = true`. O banco registra o ID e o e-mail confirmado de quem cria o registro pelo site autenticado, inclusive nas importações. O e-mail não muda ao consultar, retomar ou encerrar a entrevista com outra conta. Registros antigos e registros criados pelo servidor local sem login ficam como **Não registrado**; não há preenchimento retroativo. O SQL pode ser reaplicado sem apagar dados.
+
 | Tabela | Finalidade |
 | --- | --- |
 | `Qest_interviews` | Código, versão, aplicador, situação, progresso, revisão e datas da entrevista. |
