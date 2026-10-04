@@ -1,10 +1,11 @@
 -- 1. No Supabase: Authentication > Users > Add user > Create new user.
 --    Informe o e-mail e uma senha escolhida por você. Marque Auto Confirm User.
 --    Se a conta já existe no projeto, use essa mesma conta; não a recrie.
--- 2. Substitua o e-mail abaixo e execute este arquivo no SQL Editor.
+-- 2. Altere somente o e-mail na linha "declare v_email" e execute este arquivo.
+--    Não use Substituir tudo: a condição do IF abaixo verifica o marcador original.
 --    A autorização vale apenas para esta pesquisa, sem alterar os outros sites.
 do $$
-declare v_email text := lower(trim('SEU_EMAIL_AQUI'));
+declare v_email text := lower(trim('lucivaldobarroso.dev@gmail.com'));
 begin
   if v_email = 'seu_email_aqui' or position('@' in v_email) = 0 then
     raise exception 'Substitua SEU_EMAIL_AQUI pelo e-mail que vai acessar a pesquisa.';
