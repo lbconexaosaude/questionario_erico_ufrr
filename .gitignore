@@ -1,0 +1,12 @@
+node_modules/
+.npm-cache/
+storage/
+.env
+.env.*
+!.env.example
+*.log
+test-results/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*

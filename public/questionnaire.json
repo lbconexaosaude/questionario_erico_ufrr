@@ -1,0 +1,1282 @@
+{
+  "version": "1.3",
+  "title": "QUESTIONÁRIO DE PESQUISA BIOPSICOSSOCIAL",
+  "sections": [
+    {
+      "id": "identification",
+      "sourceTitle": "IDENTIFICAÇÃO E DADOS DEMOGRÁFICOS",
+      "title": "Identificação e dados demográficos",
+      "range": "Q1 — Q7.1"
+    },
+    {
+      "id": "family",
+      "sourceTitle": "CONTEXTO FAMILIAR",
+      "title": "Contexto familiar",
+      "range": "Q8 — Q11.1"
+    },
+    {
+      "id": "mental",
+      "sourceTitle": "HISTÓRICO DE SAÚDE MENTAL",
+      "title": "Histórico de saúde mental",
+      "range": "Q12 — Q19"
+    },
+    {
+      "id": "health",
+      "sourceTitle": "COMORBIDADES E HÁBITOS",
+      "title": "Comorbidades e hábitos",
+      "range": "Q20 — Q26"
+    },
+    {
+      "id": "work",
+      "sourceTitle": "ASPECTOS LABORAIS/FINANCEIROS",
+      "title": "Aspectos laborais/financeiros",
+      "range": "Q27 — Q32"
+    },
+    {
+      "id": "social",
+      "sourceTitle": "CONTEXTO SOCIAL",
+      "title": "Contexto social",
+      "range": "Q33 — Q39"
+    },
+    {
+      "id": "history",
+      "sourceTitle": "ANTECEDENTES E HISTÓRIA ATUAL",
+      "title": "Antecedentes e história atual",
+      "range": "Q40 — Q53"
+    }
+  ],
+  "opening": "Você se sente à vontade para responder perguntas sobre a pessoa falecida? (0) Não (1) Sim. Se não, entrevista interrompida. Se sim, iniciar a entrevista. A pergunta será repetida no meio da entrevista (Q26 – Q27).",
+  "checkpoint": "Você se sente à vontade para continuar respondendo? (0) Não (1) Sim. Se não, entrevista interrompida. Se sim, continua a aplicação do questionário.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": "Q1",
+      "section": "identification",
+      "text": "Q1. Nome: ___________________________________________________",
+      "type": "text",
+      "prompt": "Q1. Nome:"
+    },
+    {
+      "id": "q2",
+      "number": "Q2",
+      "section": "identification",
+      "text": "Q2. Idade: _________ anos",
+      "type": "integer",
+      "prompt": "Q2. Idade:  anos"
+    },
+    {
+      "id": "q3",
+      "number": "Q3",
+      "section": "identification",
+      "text": "Q3. Gênero: (1) Masculino (2) Feminino (3) Outros: ________________",
+      "type": "single",
+      "prompt": "Q3. Gênero:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Masculino"
+        },
+        {
+          "value": 2,
+          "label": "Feminino"
+        },
+        {
+          "value": 3,
+          "label": "Outros:"
+        }
+      ],
+      "detail": {
+        "when": 3,
+        "label": "Outros:"
+      }
+    },
+    {
+      "id": "q4",
+      "number": "Q4",
+      "section": "identification",
+      "text": "Q4. Etnia/Raça: (1) Branca (2) Preta (3) Parda (4) Amarela (5) Indígena",
+      "type": "single",
+      "prompt": "Q4. Etnia/Raça:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Branca"
+        },
+        {
+          "value": 2,
+          "label": "Preta"
+        },
+        {
+          "value": 3,
+          "label": "Parda"
+        },
+        {
+          "value": 4,
+          "label": "Amarela"
+        },
+        {
+          "value": 5,
+          "label": "Indígena"
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": "Q5",
+      "section": "identification",
+      "text": "Q5. Escolaridade: (0) Analfabeto (1) Fund. Completo (2) Médio Completo (3) Superior Completo (4) Pós-graduação",
+      "type": "single",
+      "prompt": "Q5. Escolaridade:",
+      "options": [
+        {
+          "value": 0,
+          "label": "Analfabeto"
+        },
+        {
+          "value": 1,
+          "label": "Fund. Completo"
+        },
+        {
+          "value": 2,
+          "label": "Médio Completo"
+        },
+        {
+          "value": 3,
+          "label": "Superior Completo"
+        },
+        {
+          "value": 4,
+          "label": "Pós-graduação"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": "Q6",
+      "section": "identification",
+      "text": "Q6. Estado Civil: (1) Solteiro (2) Casado/União Estável (3) Divorciado (4) Viúvo",
+      "type": "single",
+      "prompt": "Q6. Estado Civil:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Solteiro"
+        },
+        {
+          "value": 2,
+          "label": "Casado/União Estável"
+        },
+        {
+          "value": 3,
+          "label": "Divorciado"
+        },
+        {
+          "value": 4,
+          "label": "Viúvo"
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "number": "Q7",
+      "section": "identification",
+      "text": "Q7. Compartilhava o lar com alguém? (0) Não (1) Sim |",
+      "type": "single",
+      "prompt": "Q7. Compartilhava o lar com alguém?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q7.1",
+      "number": "Q7.1",
+      "section": "identification",
+      "text": "Q7.1 Há quanto tempo (meses)? ________",
+      "type": "integer",
+      "prompt": "Q7.1 Há quanto tempo (meses)?"
+    },
+    {
+      "id": "q8",
+      "number": "Q8",
+      "section": "family",
+      "text": "Q8. Pais vivos? (1) Sim, ambos (2) Não, apenas um (3) Não, nenhum",
+      "type": "single",
+      "prompt": "Q8. Pais vivos?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Sim, ambos"
+        },
+        {
+          "value": 2,
+          "label": "Não, apenas um"
+        },
+        {
+          "value": 3,
+          "label": "Não, nenhum"
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "number": "Q9",
+      "section": "family",
+      "text": "Q9. Pais moram juntos? (0) Não (1) Sim (2) N/A (falecidos)",
+      "type": "single",
+      "prompt": "Q9. Pais moram juntos?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "N/A (falecidos)"
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "number": "Q10",
+      "section": "family",
+      "text": "Q10. Sempre morou com os pais? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q10. Sempre morou com os pais?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "number": "Q11",
+      "section": "family",
+      "text": "Q11. Histórico Familiar (0-Não / 1-Sim):",
+      "type": "single",
+      "prompt": "Q11. Histórico Familiar (0-Não / 1-Sim):",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q11.1",
+      "number": "Q11.1",
+      "section": "family",
+      "text": "Q11.1 Qual? (1) Depressão (2) Suicídio (3) Bipolaridade (4) Esquizofrenia (5) Outros:_____________",
+      "type": "multiple",
+      "prompt": "Q11.1 Qual?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Depressão"
+        },
+        {
+          "value": 2,
+          "label": "Suicídio"
+        },
+        {
+          "value": 3,
+          "label": "Bipolaridade"
+        },
+        {
+          "value": 4,
+          "label": "Esquizofrenia"
+        },
+        {
+          "value": 5,
+          "label": "Outros:"
+        }
+      ],
+      "detail": {
+        "when": 5,
+        "label": "Outros:"
+      }
+    },
+    {
+      "id": "q12",
+      "number": "Q12",
+      "section": "mental",
+      "text": "Q12. Já possuía diagnóstico de transtorno mental? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q12. Já possuía diagnóstico de transtorno mental?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "number": "Q13",
+      "section": "mental",
+      "text": "Q13. Qual diagnóstico? _________________________________________________",
+      "type": "text",
+      "prompt": "Q13. Qual diagnóstico?"
+    },
+    {
+      "id": "q14",
+      "number": "Q14",
+      "section": "mental",
+      "text": "Q14. Há quanto tempo (meses)? ___________",
+      "type": "integer",
+      "prompt": "Q14. Há quanto tempo (meses)?"
+    },
+    {
+      "id": "q15",
+      "number": "Q15",
+      "section": "mental",
+      "text": "Q15. Realizava acompanhamento/tratamento? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q15. Realizava acompanhamento/tratamento?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q16",
+      "number": "Q16",
+      "section": "mental",
+      "text": "Q16. Aderência: (1) Boa (2) Regular (3) Baixa/Nula",
+      "type": "single",
+      "prompt": "Q16. Aderência:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Boa"
+        },
+        {
+          "value": 2,
+          "label": "Regular"
+        },
+        {
+          "value": 3,
+          "label": "Baixa/Nula"
+        }
+      ]
+    },
+    {
+      "id": "q17",
+      "number": "Q17",
+      "section": "mental",
+      "text": "Q17. Falava ou tinha ideação suicida? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q17. Falava ou tinha ideação suicida?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q18",
+      "number": "Q18",
+      "section": "mental",
+      "text": "Q18. Já tentou suicídio anteriormente? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q18. Já tentou suicídio anteriormente?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q19",
+      "number": "Q19",
+      "section": "mental",
+      "text": "Q19. Mecanismo do suicídio (atual/tentativa): (1) enforcamento (2) arma de fogo (3) pesticidas (4) raticidas (5) medicamentos (6) outros ________",
+      "type": "multiple",
+      "prompt": "Q19. Mecanismo do suicídio (atual/tentativa):",
+      "options": [
+        {
+          "value": 1,
+          "label": "enforcamento"
+        },
+        {
+          "value": 2,
+          "label": "arma de fogo"
+        },
+        {
+          "value": 3,
+          "label": "pesticidas"
+        },
+        {
+          "value": 4,
+          "label": "raticidas"
+        },
+        {
+          "value": 5,
+          "label": "medicamentos"
+        },
+        {
+          "value": 6,
+          "label": "outros"
+        }
+      ],
+      "detail": {
+        "when": 6,
+        "label": "outros"
+      }
+    },
+    {
+      "id": "q20",
+      "number": "Q20",
+      "section": "health",
+      "text": "Q20. Possuía alguma comorbidade?\n(0) não (1) não sabe informar (2) Hipertensão (3) Diabetes (4) Hepatopatia (5) Neoplasia (6) Doença Hematológica (7) Síndrome Metabólica (8) Tireoidopatia (9) Reumatológica (10) Neurológica (11) Dor Crônica (12) Outra____________________________________________________________________",
+      "type": "multiple",
+      "prompt": "Q20. Possuía alguma comorbidade?",
+      "options": [
+        {
+          "value": 0,
+          "label": "não"
+        },
+        {
+          "value": 1,
+          "label": "não sabe informar"
+        },
+        {
+          "value": 2,
+          "label": "Hipertensão"
+        },
+        {
+          "value": 3,
+          "label": "Diabetes"
+        },
+        {
+          "value": 4,
+          "label": "Hepatopatia"
+        },
+        {
+          "value": 5,
+          "label": "Neoplasia"
+        },
+        {
+          "value": 6,
+          "label": "Doença Hematológica"
+        },
+        {
+          "value": 7,
+          "label": "Síndrome Metabólica"
+        },
+        {
+          "value": 8,
+          "label": "Tireoidopatia"
+        },
+        {
+          "value": 9,
+          "label": "Reumatológica"
+        },
+        {
+          "value": 10,
+          "label": "Neurológica"
+        },
+        {
+          "value": 11,
+          "label": "Dor Crônica"
+        },
+        {
+          "value": 12,
+          "label": "Outra"
+        }
+      ],
+      "detail": {
+        "when": 12,
+        "label": "Outra"
+      }
+    },
+    {
+      "id": "q21",
+      "number": "Q21",
+      "section": "health",
+      "text": "Q21. Tempo de comorbidade (meses): ___________",
+      "type": "integer",
+      "prompt": "Q21. Tempo de comorbidade (meses):"
+    },
+    {
+      "id": "q22",
+      "number": "Q22",
+      "section": "health",
+      "text": "Q22. Fazia uso de bebida alcoólica? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q22. Fazia uso de bebida alcoólica?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q23",
+      "number": "Q23",
+      "section": "health",
+      "text": "Q23. Frequência: (1) Esporádico (2) Regular",
+      "type": "single",
+      "prompt": "Q23. Frequência:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Esporádico"
+        },
+        {
+          "value": 2,
+          "label": "Regular"
+        }
+      ]
+    },
+    {
+      "id": "q24",
+      "number": "Q24",
+      "section": "health",
+      "text": "Q24. Tempo de uso (anos): ____________________",
+      "type": "integer",
+      "prompt": "Q24. Tempo de uso (anos):"
+    },
+    {
+      "id": "q25",
+      "number": "Q25",
+      "section": "health",
+      "text": "Q25. Uso de outras substâncias (lícitas/ilícitas)? (0) Não (1) Sim",
+      "type": "single",
+      "prompt": "Q25. Uso de outras substâncias (lícitas/ilícitas)?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ]
+    },
+    {
+      "id": "q26",
+      "number": "Q26",
+      "section": "health",
+      "text": "Q26. Quais substâncias? ______________________________________________________________",
+      "type": "text",
+      "prompt": "Q26. Quais substâncias?"
+    },
+    {
+      "id": "q27",
+      "number": "Q27",
+      "section": "work",
+      "text": "Q27. Situação de trabalho/ocupação principal? (0) Não trabalhava (1) Trabalho formal (2) Trabalho informal (3) Estudante (4) Aposentado (5) Outra:",
+      "type": "single",
+      "prompt": "Q27. Situação de trabalho/ocupação principal?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não trabalhava"
+        },
+        {
+          "value": 1,
+          "label": "Trabalho formal"
+        },
+        {
+          "value": 2,
+          "label": "Trabalho informal"
+        },
+        {
+          "value": 3,
+          "label": "Estudante"
+        },
+        {
+          "value": 4,
+          "label": "Aposentado"
+        },
+        {
+          "value": 5,
+          "label": "Outra:"
+        }
+      ],
+      "detail": {
+        "when": 5,
+        "label": "Outra:"
+      }
+    },
+    {
+      "id": "q28",
+      "number": "Q28",
+      "section": "work",
+      "text": "Q28. Nos últimos 12 meses, houve mudança importante de trabalho/ocupação? (0) Não (1) Sim. Se sim, qual mudança?",
+      "type": "single",
+      "prompt": "Q28. Nos últimos 12 meses, houve mudança importante de trabalho/ocupação?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Se sim, qual mudança?"
+      }
+    },
+    {
+      "id": "q29",
+      "number": "Q29",
+      "section": "work",
+      "text": "Q29. Situação financeira nos últimos 12 meses era percebida como? (1) Confortável (2) Estável (3) Difícil (4) Muito difícil.",
+      "type": "single",
+      "prompt": "Q29. Situação financeira nos últimos 12 meses era percebida como?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Confortável"
+        },
+        {
+          "value": 2,
+          "label": "Estável"
+        },
+        {
+          "value": 3,
+          "label": "Difícil"
+        },
+        {
+          "value": 4,
+          "label": "Muito difícil."
+        }
+      ]
+    },
+    {
+      "id": "q30",
+      "number": "Q30",
+      "section": "work",
+      "text": "Q30. Havia dívidas ou problemas financeiros relevantes? (0) Não (1) Sim. Se sim, quais?________ ___________________________________________________________________________________",
+      "type": "single",
+      "prompt": "Q30. Havia dívidas ou problemas financeiros relevantes?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Se sim, quais?"
+      }
+    },
+    {
+      "id": "q31",
+      "number": "Q31",
+      "section": "work",
+      "text": "Q31. Nos últimos 12 meses, a pessoa passou por algum evento estressor importante? (0) Não (1) Sim. Se sim, marque todos:\n(1) Término de relacionamento amoroso\n(2) Conflitos familiares frequentes\n(3) Perda de emprego ou renda\n(4) Problemas legais/judiciais\n(5) Luto (morte de pessoa próxima)\n(6) Doença grave própria\n(7) Doença grave de familiar\n(8) Violência (sofreu ou presenciou)\n(9) Outros:",
+      "type": "events",
+      "prompt": "Q31. Nos últimos 12 meses, a pessoa passou por algum evento estressor importante?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        }
+      ],
+      "events": [
+        {
+          "value": 1,
+          "label": "Término de relacionamento amoroso"
+        },
+        {
+          "value": 2,
+          "label": "Conflitos familiares frequentes"
+        },
+        {
+          "value": 3,
+          "label": "Perda de emprego ou renda"
+        },
+        {
+          "value": 4,
+          "label": "Problemas legais/judiciais"
+        },
+        {
+          "value": 5,
+          "label": "Luto (morte de pessoa próxima)"
+        },
+        {
+          "value": 6,
+          "label": "Doença grave própria"
+        },
+        {
+          "value": 7,
+          "label": "Doença grave de familiar"
+        },
+        {
+          "value": 8,
+          "label": "Violência (sofreu ou presenciou)"
+        },
+        {
+          "value": 9,
+          "label": "Outros:"
+        }
+      ]
+    },
+    {
+      "id": "q32",
+      "number": "Q32",
+      "section": "work",
+      "text": "Q32. Na percepção da família, houve algum evento mais próximo da data do suicídio (últimos 3 meses) que “piorou muito” o estado da pessoa? Descreva:________________________________\n_________________________________________________________________________________",
+      "type": "long_text",
+      "prompt": "Q32. Na percepção da família, houve algum evento mais próximo da data do suicídio (últimos 3 meses) que “piorou muito” o estado da pessoa? Descreva:"
+    },
+    {
+      "id": "q33",
+      "number": "Q33",
+      "section": "social",
+      "text": "Q33. Como era o círculo social da pessoa? (1) Tinha muitos amigos e contatos frequentes (2) Tinha poucos amigos, mas contato regular (3) Muito isolado(a), raramente saía ou encontrava amigos.",
+      "type": "single",
+      "prompt": "Q33. Como era o círculo social da pessoa?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Tinha muitos amigos e contatos frequentes"
+        },
+        {
+          "value": 2,
+          "label": "Tinha poucos amigos, mas contato regular"
+        },
+        {
+          "value": 3,
+          "label": "Muito isolado(a), raramente saía ou encontrava amigos."
+        }
+      ]
+    },
+    {
+      "id": "q34",
+      "number": "Q34",
+      "section": "social",
+      "text": "Q34. Participava de atividades coletivas (igreja, grupos, esportes, associações)? (0) Não (1) Sim. Quais?__________________________________________________________________________",
+      "type": "single",
+      "prompt": "Q34. Participava de atividades coletivas (igreja, grupos, esportes, associações)?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Quais?"
+      }
+    },
+    {
+      "id": "q34.1",
+      "number": "Q34.1",
+      "section": "social",
+      "text": "Q34.1 Tinha religião? (0) Não  (1) sim. Se sim. Qual? ___________________________________ Frequentava regularmente? Qual frequência semanal?_____________________________________",
+      "type": "religion",
+      "prompt": "Q34.1 Tinha religião?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "sim."
+        }
+      ]
+    },
+    {
+      "id": "q35",
+      "number": "Q35",
+      "section": "social",
+      "text": "Q35. Nos últimos 6 meses, houve mudança no padrão de socialização? (0) Não (1) Sim. Se sim, descreva (ex.: passou a se isolar, parou de sair): _________________________________________",
+      "type": "single",
+      "prompt": "Q35. Nos últimos 6 meses, houve mudança no padrão de socialização?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Se sim, descreva (ex.: passou a se isolar, parou de sair):"
+      }
+    },
+    {
+      "id": "q36",
+      "number": "Q36",
+      "section": "social",
+      "text": "Q36. Você diria que a pessoa tinha alguém em quem confiava para desabafar? (0) Não (1) Sim. Quem?__________________________________________________________________________",
+      "type": "single",
+      "prompt": "Q36. Você diria que a pessoa tinha alguém em quem confiava para desabafar?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Quem?"
+      }
+    },
+    {
+      "id": "q37",
+      "number": "Q37",
+      "section": "social",
+      "text": "Q37. Como você descreveria a pessoa em geral? (pode marcar mais de uma)\n(1) Calma\n(2) Ansiosa/preocupada\n(3) Impulsiva\n(4) Perfeccionista/exigente consigo\n(5) Introvertida\n(6) Extrovertida\n(7) Outra característica marcante:",
+      "type": "multiple",
+      "prompt": "Q37. Como você descreveria a pessoa em geral? (pode marcar mais de uma)",
+      "options": [
+        {
+          "value": 1,
+          "label": "Calma"
+        },
+        {
+          "value": 2,
+          "label": "Ansiosa/preocupada"
+        },
+        {
+          "value": 3,
+          "label": "Impulsiva"
+        },
+        {
+          "value": 4,
+          "label": "Perfeccionista/exigente consigo"
+        },
+        {
+          "value": 5,
+          "label": "Introvertida"
+        },
+        {
+          "value": 6,
+          "label": "Extrovertida"
+        },
+        {
+          "value": 7,
+          "label": "Outra característica marcante:"
+        }
+      ],
+      "detail": {
+        "when": 7,
+        "label": "Outra característica marcante:"
+      }
+    },
+    {
+      "id": "q38",
+      "number": "Q38",
+      "section": "social",
+      "text": "Q38. Na infância/adolescência, houve experiências de violência física, sexual ou emocional, bullying ou abandono relevantes? (0) Não (1) Sim (2) Não sabe informar. Se sim, descrever brevemente:____________________________________________________________________",
+      "type": "single",
+      "prompt": "Q38. Na infância/adolescência, houve experiências de violência física, sexual ou emocional, bullying ou abandono relevantes?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não sabe informar."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Se sim, descrever brevemente:"
+      }
+    },
+    {
+      "id": "q39",
+      "number": "Q39",
+      "section": "social",
+      "text": "Q39. Nos 3 meses anteriores, você notou alguma mudança significativa de humor ou comportamento? (0) Não (1) Sim. Se sim, o que mudou? (ex.: mais triste, irritado, agitado, apático, dormindo demais, etc.) ____________________________________________________________",
+      "type": "single",
+      "prompt": "Q39. Nos 3 meses anteriores, você notou alguma mudança significativa de humor ou comportamento?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Se sim, o que mudou? (ex.: mais triste, irritado, agitado, apático, dormindo demais, etc.)"
+      }
+    },
+    {
+      "id": "q40",
+      "number": "Q40",
+      "section": "history",
+      "text": "Q40. A pessoa chegou a fazer algum preparo ou planejamento (ex.: organizar documentos, despedidas, doar objetos, cartas)? (0) Não (1) Sim (2) Não sabe. Se sim, descreva: ___________\n__________________________________________________________________________________",
+      "type": "single",
+      "prompt": "Q40. A pessoa chegou a fazer algum preparo ou planejamento (ex.: organizar documentos, despedidas, doar objetos, cartas)?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não sabe."
+        }
+      ],
+      "detail": {
+        "when": 1,
+        "label": "Se sim, descreva:"
+      }
+    },
+    {
+      "id": "q41",
+      "number": "Q41",
+      "section": "history",
+      "text": "Q41. Nos dias ou semanas anteriores, fez comentários do tipo “não aguento mais”, “minha vida não faz sentido”, ou “vocês vão ficar melhor sem mim”? (0) Não (1) Sim (2) Não lembra.",
+      "type": "single",
+      "prompt": "Q41. Nos dias ou semanas anteriores, fez comentários do tipo “não aguento mais”, “minha vida não faz sentido”, ou “vocês vão ficar melhor sem mim”?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não lembra."
+        }
+      ]
+    },
+    {
+      "id": "q42",
+      "number": "Q42",
+      "section": "history",
+      "text": "Q42. A família percebia o ato como algo “inesperado” ou já temiam que pudesse acontecer? (1) Totalmente inesperado (2) Surpreendente, mas havia alguma preocupação (3) Já havia grande preocupação com risco de suicídio.",
+      "type": "single",
+      "prompt": "Q42. A família percebia o ato como algo “inesperado” ou já temiam que pudesse acontecer?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Totalmente inesperado"
+        },
+        {
+          "value": 2,
+          "label": "Surpreendente, mas havia alguma preocupação"
+        },
+        {
+          "value": 3,
+          "label": "Já havia grande preocupação com risco de suicídio."
+        }
+      ]
+    },
+    {
+      "id": "q43",
+      "number": "Q43",
+      "section": "history",
+      "text": "Q43. A pessoa tinha acesso fácil ao meio utilizado (ex.: arma de fogo em casa, agrotóxicos armazenados, cordas, grande quantidade de medicamentos)? (0) Não (1) Sim (2) Não sabe.",
+      "type": "single",
+      "prompt": "Q43. A pessoa tinha acesso fácil ao meio utilizado (ex.: arma de fogo em casa, agrotóxicos armazenados, cordas, grande quantidade de medicamentos)?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não sabe."
+        }
+      ]
+    },
+    {
+      "id": "q44",
+      "number": "Q44",
+      "section": "history",
+      "text": "Q44. O ato ocorreu: (1) Dentro de casa (2) Fora de casa – local público (3) Local de trabalho (4) Outro: .",
+      "type": "single",
+      "prompt": "Q44. O ato ocorreu:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Dentro de casa"
+        },
+        {
+          "value": 2,
+          "label": "Fora de casa – local público"
+        },
+        {
+          "value": 3,
+          "label": "Local de trabalho"
+        },
+        {
+          "value": 4,
+          "label": "Outro: ."
+        }
+      ],
+      "detail": {
+        "when": 4,
+        "label": "Outro:"
+      }
+    },
+    {
+      "id": "q45",
+      "number": "Q45",
+      "section": "history",
+      "text": "Q45. Havia alguém presente ou por perto no momento (mesma casa ou ambiente)? (0) Não (1) Sim (2) Não sabe.",
+      "type": "single",
+      "prompt": "Q45. Havia alguém presente ou por perto no momento (mesma casa ou ambiente)?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não sabe."
+        }
+      ]
+    },
+    {
+      "id": "q46",
+      "number": "Q46",
+      "section": "history",
+      "text": "Q46. Além de tratamento psiquiátrico/psicológico (quando presente), a pessoa chegou a procurar serviços de saúde (UPA, pronto-socorro, UBS) por sofrimento emocional nos 12 meses anteriores? (0) Não (1) Sim (2) Não sabe.",
+      "type": "single",
+      "prompt": "Q46. Além de tratamento psiquiátrico/psicológico (quando presente), a pessoa chegou a procurar serviços de saúde (UPA, pronto-socorro, UBS) por sofrimento emocional nos 12 meses anteriores?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não sabe."
+        }
+      ]
+    },
+    {
+      "id": "q47",
+      "number": "Q47",
+      "section": "history",
+      "text": "Q47. Em algum atendimento, vocês foram informados sobre risco de suicídio ou receberam orientações específicas (como procurar CAPS, retorno rápido etc.)? (0) Não (1) Sim (2) Não sabe.",
+      "type": "single",
+      "prompt": "Q47. Em algum atendimento, vocês foram informados sobre risco de suicídio ou receberam orientações específicas (como procurar CAPS, retorno rápido etc.)?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim"
+        },
+        {
+          "value": 2,
+          "label": "Não sabe."
+        }
+      ]
+    },
+    {
+      "id": "q48",
+      "number": "Q48",
+      "section": "history",
+      "text": "Q48. Na sua opinião, quais foram as principais dificuldades para manter tratamento (quando havia indicação)? Opções: (1) Falta de serviço disponível (2) Horário incompatível (3) Falta de recursos financeiros (4) Vergonha/estigma (5) Recusa da própria pessoa (6) Outras: ______________\n__________________________________________________________________________________",
+      "type": "multiple",
+      "prompt": "Q48. Na sua opinião, quais foram as principais dificuldades para manter tratamento (quando havia indicação)? Opções:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Falta de serviço disponível"
+        },
+        {
+          "value": 2,
+          "label": "Horário incompatível"
+        },
+        {
+          "value": 3,
+          "label": "Falta de recursos financeiros"
+        },
+        {
+          "value": 4,
+          "label": "Vergonha/estigma"
+        },
+        {
+          "value": 5,
+          "label": "Recusa da própria pessoa"
+        },
+        {
+          "value": 6,
+          "label": "Outras:"
+        }
+      ],
+      "detail": {
+        "when": 6,
+        "label": "Outras:"
+      }
+    },
+    {
+      "id": "q49",
+      "number": "Q49",
+      "section": "history",
+      "text": "Q49. Na sua opinião, quais foram os principais motivos ou fatores que contribuíram para que isso acontecesse? _______________________________________________________________________",
+      "type": "long_text",
+      "prompt": "Q49. Na sua opinião, quais foram os principais motivos ou fatores que contribuíram para que isso acontecesse?"
+    },
+    {
+      "id": "q50",
+      "number": "Q50",
+      "section": "history",
+      "text": "Q50. Se você pudesse destacar três situações ou problemas que mais o(a) afetavam nos últimos meses, quais seriam? __________________________________________________________________________________",
+      "type": "long_text",
+      "prompt": "Q50. Se você pudesse destacar três situações ou problemas que mais o(a) afetavam nos últimos meses, quais seriam?"
+    },
+    {
+      "id": "q51",
+      "number": "Q51",
+      "section": "history",
+      "text": "Q51. Há algo que você gostaria de acrescentar sobre a história dele/dela que considere importante para entender o que aconteceu? _______________________________________________________",
+      "type": "long_text",
+      "prompt": "Q51. Há algo que você gostaria de acrescentar sobre a história dele/dela que considere importante para entender o que aconteceu?"
+    },
+    {
+      "id": "q52",
+      "number": "Q52",
+      "section": "history",
+      "text": "Q52. Grau de parentesco do entrevistado com a pessoa falecida: (1) Pai/mãe (2) Filho(a) (3) Cônjuge/companheiro(a) (4) Irmão(ã) (5) Outro:____________________________________________",
+      "type": "single",
+      "prompt": "Q52. Grau de parentesco do entrevistado com a pessoa falecida:",
+      "options": [
+        {
+          "value": 1,
+          "label": "Pai/mãe"
+        },
+        {
+          "value": 2,
+          "label": "Filho(a)"
+        },
+        {
+          "value": 3,
+          "label": "Cônjuge/companheiro(a)"
+        },
+        {
+          "value": 4,
+          "label": "Irmão(ã)"
+        },
+        {
+          "value": 5,
+          "label": "Outro:"
+        }
+      ],
+      "detail": {
+        "when": 5,
+        "label": "Outro:"
+      }
+    },
+    {
+      "id": "q53",
+      "number": "Q53",
+      "section": "history",
+      "text": "Q53. Ao final da entrevista, ofereceremos informações sobre serviços de apoio (psicológico, grupos de luto, etc.). Você gostaria de receber essas informações? (0) Não (1) Sim.",
+      "type": "single",
+      "prompt": "Q53. Ao final da entrevista, ofereceremos informações sobre serviços de apoio (psicológico, grupos de luto, etc.). Você gostaria de receber essas informações?",
+      "options": [
+        {
+          "value": 0,
+          "label": "Não"
+        },
+        {
+          "value": 1,
+          "label": "Sim."
+        }
+      ]
+    }
+  ]
+}

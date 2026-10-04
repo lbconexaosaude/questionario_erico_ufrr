@@ -1,0 +1,14 @@
+:host{display:block;--lb-ink:#173f48;--lb-muted:#486268;--lb-accent:#205c65;--lb-line:#c6d5cf;color:var(--lb-ink);font-family:inherit;font-size:1rem;line-height:1.5}
+*{box-sizing:border-box}
+p{margin:0}
+.lb-footer{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:28px 0 30px;border-top:1px solid var(--lb-line)}
+.lb-identity{display:flex;align-items:center;gap:20px;min-width:0}
+.lb-logo{display:block;width:96px;aspect-ratio:963/1112;object-fit:cover;flex-shrink:0;border:1px solid #dce2df;border-radius:12px;background:#fff}
+.lb-eyebrow{color:var(--lb-muted);font-size:.6em;font-weight:700;letter-spacing:.16em;margin-bottom:5px}
+.lb-name{font-size:1.35em;font-weight:650;letter-spacing:-.035em;line-height:1.25}
+.lb-name span{font-size:.75em;letter-spacing:.08em;font-weight:700}
+.lb-tagline{font-size:.76em;color:var(--lb-muted);margin-top:7px}
+.lb-signature{text-align:right;flex-shrink:0}
+.lb-copyright{font-size:.67em;line-height:1.7;color:var(--lb-muted)}
+@media(max-width:600px){.lb-footer{flex-direction:column;align-items:flex-start;gap:20px;padding:25px 0}.lb-logo{width:78px}.lb-identity{gap:15px}.lb-name{font-size:1.2em}.lb-tagline{font-size:.7em}.lb-signature{text-align:left}.lb-copyright{font-size:.62em}}
+@media print{:host{display:none}}
