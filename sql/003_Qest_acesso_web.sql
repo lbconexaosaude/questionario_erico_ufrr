@@ -100,13 +100,22 @@ begin
   select instrument into config from public."Qest_web_config" where singleton;
   if p_operation = 'health' then return jsonb_build_object('schema_version',2,'prefix','Qest_'); end if;
   if p_operation = any(array['get','list']) then return public."Qest_store"(p_operation,p_payload); end if;
-  if p_operation = 'create' then
+  if p_operation = any(array['soft_delete','restore']) then
+    if jsonb_typeof(p_payload->'revision') is distinct from 'number' or (p_payload->>'revision') !~ '^[0-9]{1,9}$'
+      or coalesce(p_payload->>'id','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' then
+      raise sqlstate 'PT400' using message='Invalid interview or revision';
+    end if;
+    return public."Qest_store"(p_operation, jsonb_build_object(
+      'id',p_payload->>'id','revision',p_payload->'revision',
+      'actor_user_id',auth.uid(),'actor_email',(select lower(email) from auth.users where id=auth.uid())
+    ));
+  elsif p_operation = 'create' then
     if p_payload ? 'interviewer' and (jsonb_typeof(p_payload->'interviewer') is distinct from 'string' or length(p_payload->>'interviewer') > 200) then raise sqlstate 'PT400' using message='Invalid interviewer'; end if;
     return public."Qest_store"('create', jsonb_build_object('interviewer',coalesce(p_payload->>'interviewer',''),'instrument_version',config->>'version'));
   elsif p_operation = 'save' then
     perform 1 from public."Qest_interviews" where id=(p_payload->>'id')::uuid for update;
     existing := public."Qest_store"('get',jsonb_build_object('id',p_payload->>'id'));
-    if existing->>'status' <> 'in_progress' or (p_payload->'revision') is distinct from (existing->'revision') then raise sqlstate 'PT409' using message='Revision conflict or interview closed'; end if;
+    if existing->>'deleted_at' is not null or existing->>'status' <> 'in_progress' or (p_payload->'revision') is distinct from (existing->'revision') then raise sqlstate 'PT409' using message='Revision conflict or interview closed'; end if;
     perform public."Qest_validate_answers"(p_payload->'answers');
     answers := (existing->'answers') || (p_payload->'answers');
     if jsonb_typeof(p_payload->'position') is distinct from 'number' or (p_payload->>'position') !~ '^[0-9]{1,2}$' then raise sqlstate 'PT400' using message='Invalid position'; end if;

@@ -85,11 +85,16 @@ export function createApp({ dbPath, store: suppliedStore } = {}) {
         if (body.interviewer !== undefined && (typeof body.interviewer !== 'string' || body.interviewer.length > 200)) fail(400, 'Nome de aplicador inválido.');
         return send(201, await store.create({ interviewer: body.interviewer || '', instrument_version: instrument.version }));
       }
+      const lifecycle = url.pathname.match(/^\/api\/interviews\/([a-f0-9-]+)\/(delete|restore)$/);
+      if (lifecycle && req.method === 'POST') {
+        if (!Number.isSafeInteger(body.revision) || body.revision < 0) fail(400, 'Revisão inválida.');
+        return send(200, await store.setDeleted({ id: lifecycle[1], revision: body.revision, deleted: lifecycle[2] === 'delete' }));
+      }
       const match = url.pathname.match(/^\/api\/interviews\/([a-f0-9-]+)$/);
       if (match && req.method === 'GET') return send(200, await store.get(match[1]));
       if (match && req.method === 'PATCH') {
         const existing = await store.get(match[1]);
-        if (existing.status !== 'in_progress') fail(409, 'Esta entrevista está encerrada e disponível somente para leitura.');
+        if (existing.deleted_at || existing.status !== 'in_progress') fail(409, 'Esta entrevista está excluída ou encerrada e disponível somente para leitura.');
         if (body.revision !== existing.revision) fail(409, 'A entrevista foi alterada em outra aba. Preserve suas respostas pendentes e recarregue antes de continuar.');
         validateAnswers(body.answers);
         const answers = { ...existing.answers, ...body.answers };

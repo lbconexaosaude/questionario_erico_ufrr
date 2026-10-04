@@ -46,6 +46,12 @@ Nos saltos acionados por Não, uma resposta em branco não é tratada como Não.
 
 Entrevistas encerradas antes da atualização mantêm a versão registrada e suas respostas originais, inclusive escolhas escalares. Entrevistas em andamento passam à versão 1.3 no próximo salvamento. A consulta e a impressão de entrevistas encerradas na versão 1.2 conservam a antiga regra da Q7.
 
+## Exclusão reversível
+
+No painel, **Excluir** pede confirmação e move a entrevista para **Questionários excluídos**, abaixo da lista principal. Ela deixa de entrar nos totais, gráficos, exportações CSV/JSON, impressão e lista de retomada. A consulta permanece disponível. **Restaurar** pede nova confirmação e devolve o registro à ordem dos códigos (maior para menor), preservando as respostas, datas de início/encerramento, versão, aplicador, conta criadora e situação anterior. As duas tabelas seguem os filtros do painel.
+
+No Supabase, execute **`sql/006_Qest_exclusao_reversivel.sql`** para ativar as operações. Todas as contas autorizadas da pesquisa podem usá-las. A data e a conta da exclusão aparecem na tabela de excluídos; no modo local sem login, a conta fica não registrada. A revisão do registro impede ações sobre uma versão desatualizada. Se uma aba tentar salvar após a exclusão em outra sessão, suas alterações pendentes ficam preservadas em uma cópia e o questionário permanece excluído. Registros excluídos não são recriados por importações duplicadas. Arquivos já baixados não mudam; gere novamente as exportações e PDFs para refletir a seleção atual.
+
 ## Impressão e PDF
 
 A consulta exibe um quadro com Nome (Q1), Aplicador, Início, Encerramento, Situação e a versão do Instrumento registrada na entrevista. Registros em andamento mostram “Ainda não encerrada”.

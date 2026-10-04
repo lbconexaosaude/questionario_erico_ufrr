@@ -44,7 +44,7 @@ export function createAutosave({ record, baseline = record.answers, pending = fa
           if (error.status !== 409 || ++conflicts > 3) throw error;
           if (!synchronizing) { synchronizing = true; onSync(true); }
           const latest = await read(record.id);
-          if (latest.status !== 'in_progress') {
+          if (latest.deleted_at || latest.status !== 'in_progress') {
             // Não reabre nem sobrescreve uma entrevista encerrada por outra sessão.
             await onClosed(copy(record), latest);
             Object.assign(record, latest);

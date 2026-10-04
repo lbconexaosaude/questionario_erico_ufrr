@@ -9,7 +9,8 @@ A interface pública usa o mesmo questionário, navegação, impressão, exporta
 3. Abra **Authentication → Users → Add user → Create new user**. Cadastre o e-mail e a senha que deseja usar e marque **Auto Confirm User**. Se essa conta já existir, use-a sem recriar ou alterar outras contas.
 4. Abra **`sql/004_Qest_autorizar_acesso.sql`**, confira os e-mails na lista `v_emails` e execute o arquivo inteiro no SQL Editor. Cada e-mail deve estar cadastrado e confirmado.
 5. Execute **`sql/005_Qest_conta_da_entrevista.sql`** para registrar automaticamente a conta que cria ou importa cada nova entrevista. Confira o resultado `registro_de_conta_instalado = true`.
-6. Entre no site publicado com esse e-mail e senha.
+6. Execute **`sql/006_Qest_exclusao_reversivel.sql`** para habilitar exclusão e restauração. Confira `exclusao_reversivel_instalada = true`. Em instalações existentes, execute somente esse novo arquivo se os anteriores já foram aplicados.
+7. Entre no site publicado com esse e-mail e senha.
 
 Para autorizar outra pessoa, repita os passos 3 e 4. Para revogar apenas o acesso à pesquisa, execute `update public."Qest_access" set active=false where email='EMAIL_DA_PESSOA';`. Isso não exclui a conta nem modifica os demais sites.
 

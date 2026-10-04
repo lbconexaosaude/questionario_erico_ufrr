@@ -15,6 +15,9 @@ export function createOnlineClient(config, instrument) {
   async function rpc(operation, payload = {}) {
     const { data, error } = await client.rpc('Qest_web', { p_operation: operation, p_payload: payload }).abortSignal(AbortSignal.timeout(30000));
     if (!error) return data;
+    if (['soft_delete', 'restore'].includes(operation) && error.code === 'PT400' && /Unknown/.test(error.message || '')) {
+      throw fail(503, 'Execute o SQL 006_Qest_exclusao_reversivel.sql no Supabase para ativar a exclusão e restauração.');
+    }
     const errors = {
       PT403: [403, 'Este e-mail ainda não tem acesso a esta pesquisa. Solicite a autorização ao responsável.'],
       PT404: [404, 'Entrevista não encontrada.'],
@@ -58,6 +61,8 @@ export function createOnlineClient(config, instrument) {
       const method = options.method || 'GET', body = options.body ? JSON.parse(options.body) : {};
       if (url === '/api/config') return {storage:{provider:'supabase',label:'Banco Supabase',scope:`supabase-web-${project}`}};
       if (url === '/api/interviews') return method === 'POST' ? rpc('create',body) : list();
+      const lifecycle = /^\/api\/interviews\/([a-f0-9-]+)\/(delete|restore)$/.exec(url);
+      if (lifecycle && method === 'POST') return rpc(lifecycle[2] === 'delete' ? 'soft_delete' : 'restore', { id:lifecycle[1], revision:body.revision });
       const match = /^\/api\/interviews\/([a-f0-9-]+)$/.exec(url);
       if (match) {
         if (method === 'GET') return rpc('get',{id:match[1]});

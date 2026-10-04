@@ -1,82 +1,12 @@
--- Pesquisa Érico / UFRR. Execute TODO este arquivo no SQL Editor do Supabase.
--- As aspas preservam o prefixo exato Qest_ (Q maiúsculo).
--- Este script não altera tabelas, políticas ou funções dos outros sites.
--- Pode ser reaplicado sem apagar registros. Acesso somente pelo servidor.
+-- Exclusão reversível. Execute TODO este arquivo após 001 e 003 (e 005 para a conta criadora).
+-- Não apaga entrevistas, respostas, códigos ou dados de outros sites. Pode ser reaplicado.
+-- Gerado por npm run sql:web a partir das RPCs mantidas no projeto.
 begin;
-
-create table if not exists public."Qest_interviews" (
-  id uuid primary key default gen_random_uuid(),
-  code text not null unique,
-  instrument_version text not null,
-  interviewer text not null default '' check (length(interviewer) <= 200),
-  status text not null default 'in_progress'
-    check (status in ('in_progress','completed','interrupted_opening','interrupted_checkpoint')),
-  position integer not null default 0 check (position between 0 and 65),
-  revision integer not null default 0 check (revision >= 0),
-  started_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  ended_at timestamptz,
-  check ((status = 'in_progress' and ended_at is null) or (status <> 'in_progress' and ended_at is not null))
-);
-
 alter table public."Qest_interviews"
   add column if not exists deleted_at timestamptz,
   add column if not exists deleted_by_user_id uuid,
   add column if not exists deleted_by_email text;
-
-create table if not exists public."Qest_responses" (
-  interview_id uuid not null references public."Qest_interviews"(id),
-  question_id text not null check (question_id ~ '^(opening|checkpoint|q([1-9]|[1-4][0-9]|5[0-3])|q(7|11|34)\.1)$'),
-  answer jsonb not null check (jsonb_typeof(answer) = 'object'),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  primary key (interview_id, question_id)
-);
-
-create table if not exists public."Qest_import_keys" (
-  fingerprint text primary key check (fingerprint ~ '^[a-f0-9]{64}$'),
-  interview_id uuid not null references public."Qest_interviews"(id),
-  created_at timestamptz not null default now()
-);
-
-create index if not exists "Qest_interviews_started_idx" on public."Qest_interviews"(started_at desc);
-create index if not exists "Qest_interviews_status_idx" on public."Qest_interviews"(status);
-create index if not exists "Qest_import_keys_interview_idx" on public."Qest_import_keys"(interview_id);
-create sequence if not exists public."Qest_code_seq";
-
-alter table public."Qest_interviews" enable row level security;
-alter table public."Qest_responses" enable row level security;
-alter table public."Qest_import_keys" enable row level security;
--- Nenhuma política pública: as chaves anon/publishable e usuários de outros sites não acessam estes dados.
-revoke all on public."Qest_interviews", public."Qest_responses", public."Qest_import_keys" from public, anon, authenticated;
-revoke all on sequence public."Qest_code_seq" from public, anon, authenticated;
-grant select, insert, update on public."Qest_interviews", public."Qest_responses", public."Qest_import_keys" to service_role;
-grant usage, select on sequence public."Qest_code_seq" to service_role;
-
-create or replace function public."Qest_interview_json"(p_id uuid)
-returns jsonb language sql stable security invoker set search_path = '' as $$
-  select to_jsonb(i) || jsonb_build_object('answers', coalesce((
-    select jsonb_object_agg(r.question_id, r.answer)
-    from public."Qest_responses" r where r.interview_id = i.id
-  ), '{}'::jsonb)) from public."Qest_interviews" i where i.id = p_id;
-$$;
-
-create or replace function public."Qest_next_code"()
-returns text language plpgsql security invoker set search_path = '' as $$
-declare v_code text; v_number text;
-begin
-  loop
-    v_number := nextval('public."Qest_code_seq"'::regclass)::text;
-    v_code := 'BIO-' || to_char(now() at time zone 'America/Manaus', 'YYYY') || '-'
-      || lpad(v_number, greatest(6, length(v_number)), '0');
-    exit when not exists (select 1 from public."Qest_interviews" where code = v_code);
-  end loop;
-  return v_code;
-end;
-$$;
-
--- Uma chamada RPC grava entrevista e respostas na mesma transação.
--- Revisão + FOR UPDATE impedem sobrescrita concorrente e edição de entrevista encerrada.
+comment on column public."Qest_interviews".deleted_at is 'Quando preenchido, exclui o registro das estatísticas, exportações e retomada; respostas preservadas para restauração.';
 create or replace function public."Qest_store"(p_operation text, p_payload jsonb default '{}'::jsonb)
 returns jsonb language plpgsql security invoker set search_path = '' as $$
 declare
@@ -189,12 +119,68 @@ begin
   raise sqlstate 'PT400' using message = 'Unknown Qest operation';
 end;
 $$;
-
--- PostgreSQL concede EXECUTE a PUBLIC por padrão: restringimos somente nossas funções.
-revoke all on function public."Qest_interview_json"(uuid), public."Qest_next_code"(), public."Qest_store"(text,jsonb) from public, anon, authenticated;
-grant execute on function public."Qest_interview_json"(uuid), public."Qest_next_code"(), public."Qest_store"(text,jsonb) to service_role;
-comment on table public."Qest_interviews" is 'Pesquisa Érico/UFRR: entrevistas e estado de aplicação.';
-comment on table public."Qest_responses" is 'Pesquisa Érico/UFRR: respostas por entrevista e questão.';
-comment on table public."Qest_import_keys" is 'Pesquisa Érico/UFRR: prevenção de reimportação duplicada.';
+create or replace function public."Qest_web"(p_operation text, p_payload jsonb default '{}'::jsonb)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare config jsonb; existing jsonb; answers jsonb; state text; pos integer; row_data jsonb;
+begin
+  if auth.uid() is null or not exists (
+    select 1 from auth.users u join public."Qest_access" a on a.email = lower(u.email)
+    where u.id = auth.uid() and u.email_confirmed_at is not null and a.active
+  ) then raise sqlstate 'PT403' using message='Access to this research is not authorized'; end if;
+  if jsonb_typeof(p_payload) is distinct from 'object' or octet_length(p_payload::text) > 8000000 then raise sqlstate 'PT400' using message='Invalid payload'; end if;
+  select instrument into config from public."Qest_web_config" where singleton;
+  if p_operation = 'health' then return jsonb_build_object('schema_version',2,'prefix','Qest_'); end if;
+  if p_operation = any(array['get','list']) then return public."Qest_store"(p_operation,p_payload); end if;
+  if p_operation = any(array['soft_delete','restore']) then
+    if jsonb_typeof(p_payload->'revision') is distinct from 'number' or (p_payload->>'revision') !~ '^[0-9]{1,9}$'
+      or coalesce(p_payload->>'id','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' then
+      raise sqlstate 'PT400' using message='Invalid interview or revision';
+    end if;
+    return public."Qest_store"(p_operation, jsonb_build_object(
+      'id',p_payload->>'id','revision',p_payload->'revision',
+      'actor_user_id',auth.uid(),'actor_email',(select lower(email) from auth.users where id=auth.uid())
+    ));
+  elsif p_operation = 'create' then
+    if p_payload ? 'interviewer' and (jsonb_typeof(p_payload->'interviewer') is distinct from 'string' or length(p_payload->>'interviewer') > 200) then raise sqlstate 'PT400' using message='Invalid interviewer'; end if;
+    return public."Qest_store"('create', jsonb_build_object('interviewer',coalesce(p_payload->>'interviewer',''),'instrument_version',config->>'version'));
+  elsif p_operation = 'save' then
+    perform 1 from public."Qest_interviews" where id=(p_payload->>'id')::uuid for update;
+    existing := public."Qest_store"('get',jsonb_build_object('id',p_payload->>'id'));
+    if existing->>'deleted_at' is not null or existing->>'status' <> 'in_progress' or (p_payload->'revision') is distinct from (existing->'revision') then raise sqlstate 'PT409' using message='Revision conflict or interview closed'; end if;
+    perform public."Qest_validate_answers"(p_payload->'answers');
+    answers := (existing->'answers') || (p_payload->'answers');
+    if jsonb_typeof(p_payload->'position') is distinct from 'number' or (p_payload->>'position') !~ '^[0-9]{1,2}$' then raise sqlstate 'PT400' using message='Invalid position'; end if;
+    pos := (p_payload->>'position')::integer;
+    state := 'in_progress';
+    if p_payload->>'action' = 'complete' then state := 'completed';
+    elsif p_payload->>'action' = 'interrupt' then
+      if pos = 0 then state := 'interrupted_opening'; elsif pos = 33 then state := 'interrupted_checkpoint';
+      else raise sqlstate 'PT400' using message='Invalid interruption'; end if;
+    elsif p_payload ? 'action' then raise sqlstate 'PT400' using message='Unknown action'; end if;
+    perform public."Qest_validate_record"(answers,pos,state);
+    return public."Qest_store"('save', p_payload || jsonb_build_object('answers',answers,'position',pos,'status',state,'instrument_version',config->>'version'));
+  elsif p_operation = any(array['duplicates','import']) then
+    if jsonb_typeof(p_payload->'rows') is distinct from 'array' or jsonb_array_length(p_payload->'rows') > 500 then raise sqlstate 'PT400' using message='Invalid import batch'; end if;
+    if p_operation = 'duplicates' then return public."Qest_store"('duplicates',p_payload); end if;
+    for row_data in select value from jsonb_array_elements(p_payload->'rows') loop
+      if jsonb_typeof(row_data) is distinct from 'object'
+        or coalesce(row_data->>'instrument_version','') not in ('1.0-original','1.1','1.2',config->>'version')
+        or coalesce(row_data->>'fingerprint','') !~ '^[a-f0-9]{64}$'
+        or coalesce(row_data->>'code','') !~ '^[A-Za-z0-9_.-]{0,100}$'
+        or length(coalesce(row_data->>'interviewer','')) > 200
+        or jsonb_typeof(row_data->'position') is distinct from 'number' or (row_data->>'position') !~ '^[0-9]{1,2}$' then
+        raise sqlstate 'PT400' using message='Invalid imported record';
+      end if;
+      perform public."Qest_validate_record"(row_data->'answers',(row_data->>'position')::integer,row_data->>'status');
+    end loop;
+    return public."Qest_store"('import',p_payload);
+  end if;
+  raise sqlstate 'PT400' using message='Unknown operation';
+end;
+$$;
+revoke all on function public."Qest_store"(text,jsonb), public."Qest_web"(text,jsonb) from public, anon, authenticated;
+grant execute on function public."Qest_store"(text,jsonb) to service_role;
+grant execute on function public."Qest_web"(text,jsonb) to authenticated;
 notify pgrst, 'reload schema';
 commit;
+select exists(select 1 from information_schema.columns where table_schema='public' and table_name='Qest_interviews' and column_name='deleted_at') as exclusao_reversivel_instalada;

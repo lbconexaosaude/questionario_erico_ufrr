@@ -87,6 +87,20 @@ test('tentativas limitadas fecham modal, preservam pendência e permitem tentar 
   assert.equal(saver.snapshot().answers.q1.value, 'Pendente');
 });
 
+test('exclusão em outra aba interrompe autosave e preserva cópia sem restaurar o registro', async () => {
+  const record = initial(); let recovery, writes = 0;
+  const saver = createAutosave({ record,
+    write: async () => { writes++; throw conflict(); },
+    read: async () => ({ ...initial(), revision: 2, deleted_at: '2026-10-04T12:00:00Z' }),
+    onClosed: local => { recovery = local; },
+  });
+  record.answers.q1.value = 'Pendente quando excluída'; saver.markDirty();
+  assert.equal(await saver.flush(), false);
+  assert.equal(writes, 1); assert.equal(saver.dirty, false);
+  assert.equal(recovery.answers.q1.value, 'Pendente quando excluída');
+  assert.ok(record.deleted_at); assert.equal(record.status, 'in_progress');
+});
+
 test('concluir durante salvamento aguarda a fila e envia a última revisão', async () => {
   const record = initial(), gate = deferred(), started = deferred(), actions = [];
   const saver = createAutosave({ record, write: async (id, payload) => {

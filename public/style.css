@@ -92,6 +92,8 @@
   #print-area .read-section .skipped-label{font-size:9pt;color:#333;font-style:italic}
 }
 .creation-account{min-width:180px;max-width:245px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}.creation-account .muted{font-size:.75rem}
+.row-actions .delete-link{color:#8b3029;border-color:#bf8982;background:#fff7f5}.row-actions .delete-link:hover{background:#f9e4df}.row-actions .restore-link{background:#edf3ef;border-color:#64896e;color:#234e37}
+.deleted-panel{margin-top:42px;padding-top:30px;border-top:2px solid #c5b9ae}.deleted-panel .table-heading{margin-bottom:14px}.deleted-panel th{background:#f4eeea}.deleted-panel .empty-state{padding:28px 20px}.deleted-notice{display:block;margin-bottom:24px;line-height:1.7}.deleted-notice strong{display:block}
 .header-actions{gap:18px;flex-wrap:wrap}.manual-button{min-height:40px;padding:9px 14px;font-size:.76rem;white-space:nowrap;border-color:var(--brand);color:var(--brand);background:#edf3ef}
 .manual-dialog{width:min(820px,calc(100% - 28px));max-width:none;max-height:88vh;max-height:88dvh;padding:0;color:var(--ink);overscroll-behavior:contain}
 .manual-heading{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 28px;background:#edf3ef;border-bottom:1px solid var(--line)}
