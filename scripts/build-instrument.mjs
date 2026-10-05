@@ -44,7 +44,7 @@ function options(text) {
 }
 const questions = collected.map(q => {
   if (q.id === 'q20') q = { ...q, text: q.text.replace(' (Marque 0 para Não / 1 para Sim):', '') };
-  const type = numeric.includes(q.id) ? 'integer' : free.includes(q.id) ? 'text' : long.includes(q.id) ? 'long_text' : q.id === 'q31' ? 'events' : ['q11.1', 'q19', 'q20', 'q37', 'q48'].includes(q.id) ? 'multiple' : q.id === 'q34.1' ? 'religion' : 'single';
+  const type = numeric.includes(q.id) ? 'integer' : free.includes(q.id) ? 'text' : long.includes(q.id) ? 'long_text' : q.id === 'q31' ? 'events' : ['q11.1', 'q19', 'q20', 'q27', 'q37', 'q48'].includes(q.id) ? 'multiple' : q.id === 'q34.1' ? 'religion' : 'single';
   const result = { ...q, type, prompt: q.text.split(/\(\d+\)/)[0].replace(/_+/g, '').replace(/\s*\|\s*$/, '').trim() };
   if (['single', 'multiple', 'events', 'religion', 'provisional'].includes(type)) result.options = options(q.text);
   if (q.id === 'q11') result.options = [{ value: 0, label: 'Não' }, { value: 1, label: 'Sim' }];
@@ -58,6 +58,6 @@ const questions = collected.map(q => {
   return result;
 });
 if (questions.length !== 56 || new Set(questions.map(q => q.id)).size !== 56) throw new Error('Contagem inesperada de questões');
-const instrument = { version: '1.3', title: paragraphs[0].trim(), sections, opening, checkpoint, questions };
+const instrument = { version: '1.4', title: paragraphs[0].trim(), sections, opening, checkpoint, questions };
 fs.writeFileSync(new URL('../public/questionnaire.json', import.meta.url), JSON.stringify(instrument, null, 2) + '\n');
 console.log(`${questions.length} questões e subquestões preservadas em sete blocos.`);

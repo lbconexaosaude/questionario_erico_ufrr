@@ -1,22 +1,11 @@
--- GitHub Pages + Supabase. Execute após 001_Qest_supabase.sql.
--- Não altera usuários, tabelas ou permissões dos outros sites.
+-- Q27 com múltiplas respostas, instrumento 1.4.
+-- Execute TODO este arquivo após a instalação do acesso web (SQL 003).
+-- Preserva entrevistas, respostas antigas e objetos dos outros sites. Pode ser reaplicado.
 begin;
-create table if not exists public."Qest_access" (
-  email text primary key check (email = lower(trim(email)) and length(email) between 3 and 254),
-  active boolean not null default true,
-  created_at timestamptz not null default now()
-);
-create table if not exists public."Qest_web_config" (
-  singleton boolean primary key default true check (singleton),
-  instrument jsonb not null
-);
-alter table public."Qest_access" enable row level security;
-alter table public."Qest_web_config" enable row level security;
-revoke all on public."Qest_access", public."Qest_web_config" from public, anon, authenticated;
-grant select on public."Qest_access", public."Qest_web_config" to service_role;
-
-insert into public."Qest_web_config" (singleton,instrument) values (true,'{"version":"1.4","flow":["opening","section-identification","q1","q2","q3","q4","q5","q6","q7","q7.1","section-family","q8","q9","q10","q11","q11.1","section-mental","q12","q13","q14","q15","q16","q17","q18","q19","section-health","q20","q21","q22","q23","q24","q25","q26","checkpoint","section-work","q27","q28","q29","q30","q31","q32","section-social","q33","q34","q34.1","q35","q36","q37","q38","q39","section-history","q40","q41","q42","q43","q44","q45","q46","q47","q48","q49","q50","q51","q52","q53","review"],"questions":{"q1":{"type":"text","options":[]},"q2":{"type":"integer","options":[]},"q3":{"type":"single","options":[1,2,3]},"q4":{"type":"single","options":[1,2,3,4,5]},"q5":{"type":"single","options":[0,1,2,3,4]},"q6":{"type":"single","options":[1,2,3,4]},"q7":{"type":"single","options":[0,1]},"q7.1":{"type":"integer","options":[]},"q8":{"type":"single","options":[1,2,3]},"q9":{"type":"single","options":[0,1,2]},"q10":{"type":"single","options":[0,1]},"q11":{"type":"single","options":[0,1]},"q11.1":{"type":"multiple","options":[1,2,3,4,5]},"q12":{"type":"single","options":[0,1]},"q13":{"type":"text","options":[]},"q14":{"type":"integer","options":[]},"q15":{"type":"single","options":[0,1]},"q16":{"type":"single","options":[1,2,3]},"q17":{"type":"single","options":[0,1]},"q18":{"type":"single","options":[0,1]},"q19":{"type":"multiple","options":[1,2,3,4,5,6]},"q20":{"type":"multiple","options":[0,1,2,3,4,5,6,7,8,9,10,11,12]},"q21":{"type":"integer","options":[]},"q22":{"type":"single","options":[0,1]},"q23":{"type":"single","options":[1,2]},"q24":{"type":"integer","options":[]},"q25":{"type":"single","options":[0,1]},"q26":{"type":"text","options":[]},"q27":{"type":"multiple","options":[0,1,2,3,4,5]},"q28":{"type":"single","options":[0,1]},"q29":{"type":"single","options":[1,2,3,4]},"q30":{"type":"single","options":[0,1]},"q31":{"type":"events","options":[0,1]},"q32":{"type":"long_text","options":[]},"q33":{"type":"single","options":[1,2,3]},"q34":{"type":"single","options":[0,1]},"q34.1":{"type":"religion","options":[0,1]},"q35":{"type":"single","options":[0,1]},"q36":{"type":"single","options":[0,1]},"q37":{"type":"multiple","options":[1,2,3,4,5,6,7]},"q38":{"type":"single","options":[0,1,2]},"q39":{"type":"single","options":[0,1]},"q40":{"type":"single","options":[0,1,2]},"q41":{"type":"single","options":[0,1,2]},"q42":{"type":"single","options":[1,2,3]},"q43":{"type":"single","options":[0,1,2]},"q44":{"type":"single","options":[1,2,3,4]},"q45":{"type":"single","options":[0,1,2]},"q46":{"type":"single","options":[0,1,2]},"q47":{"type":"single","options":[0,1,2]},"q48":{"type":"multiple","options":[1,2,3,4,5,6]},"q49":{"type":"long_text","options":[]},"q50":{"type":"long_text","options":[]},"q51":{"type":"long_text","options":[]},"q52":{"type":"single","options":[1,2,3,4,5]},"q53":{"type":"single","options":[0,1]},"opening":{"type":"single","options":[0,1]},"checkpoint":{"type":"single","options":[0,1]}}}'::jsonb) on conflict (singleton) do update set instrument=excluded.instrument;
-
+update public."Qest_web_config" set instrument = jsonb_set(
+  jsonb_set(instrument, '{questions,q27,type}', '"multiple"'::jsonb),
+  '{version}', '"1.4"'::jsonb
+) where singleton;
 create or replace function public."Qest_validate_answers"(p_answers jsonb)
 returns void language plpgsql security invoker set search_path = '' as $$
 declare i jsonb; q jsonb; a jsonb; v jsonb; k text; f text; typ text; item jsonb;
@@ -54,40 +43,6 @@ begin
   end loop;
 end;
 $$;
-
-create or replace function public."Qest_validate_record"(p_answers jsonb, p_position integer, p_status text)
-returns void language plpgsql security invoker set search_path = '' as $$
-declare i jsonb; step text; parent text; selected jsonb;
-begin
-  perform public."Qest_validate_answers"(p_answers);
-  select instrument into i from public."Qest_web_config" where singleton;
-  if p_position is null or p_position < 0 or p_position >= jsonb_array_length(i->'flow')
-    or p_status is null or not (p_status = any(array['in_progress','completed','interrupted_opening','interrupted_checkpoint'])) then
-    raise sqlstate 'PT400' using message='Invalid position or status';
-  end if;
-  step := i->'flow'->>p_position;
-  if (p_position > 0 and (p_answers#>'{opening,value}') is distinct from '1'::jsonb)
-    or (p_position > 33 and (p_answers#>'{checkpoint,value}') is distinct from '1'::jsonb)
-    or (p_status = 'completed' and p_position <> 65)
-    or (p_status = 'interrupted_opening' and (p_position <> 0 or (p_answers#>'{opening,value}') is distinct from '0'::jsonb))
-    or (p_status = 'interrupted_checkpoint' and (p_position <> 33 or (p_answers#>'{checkpoint,value}') is distinct from '0'::jsonb)) then
-    raise sqlstate 'PT400' using message='Invalid continuity';
-  end if;
-  if (step = 'q7.1' and (p_answers#>'{q7,value}') is distinct from '1'::jsonb)
-    or (step = 'q11.1' and (p_answers#>'{q11,value}') is distinct from '1'::jsonb) then
-    raise sqlstate 'PT400' using message='Skipped question';
-  end if;
-  parent := '{"q13":"q12","q14":"q12","q16":"q15","q19":"q18","q23":"q22","q24":"q22","q26":"q25"}'::jsonb->>step;
-  if parent is not null and p_answers->parent->'value' = '0'::jsonb then raise sqlstate 'PT400' using message='Skipped question'; end if;
-  selected := p_answers#>'{q20,value}';
-  if step = 'q21' and (selected = '0'::jsonb or selected = '1'::jsonb or selected @> '[0]'::jsonb or selected @> '[1]'::jsonb) then
-    raise sqlstate 'PT400' using message='Skipped question';
-  end if;
-end;
-$$;
-
--- Única entrada do site público. A autenticação e a autorização são verificadas
--- dentro do banco em TODAS as chamadas, incluindo leitura e exportação.
 create or replace function public."Qest_web"(p_operation text, p_payload jsonb default '{}'::jsonb)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare config jsonb; existing jsonb; answers jsonb; state text; pos integer; row_data jsonb;
@@ -147,8 +102,9 @@ begin
   raise sqlstate 'PT400' using message='Unknown operation';
 end;
 $$;
-revoke all on function public."Qest_validate_answers"(jsonb), public."Qest_validate_record"(jsonb,integer,text), public."Qest_web"(text,jsonb) from public, anon, authenticated;
+revoke all on function public."Qest_validate_answers"(jsonb), public."Qest_web"(text,jsonb) from public, anon, authenticated;
 grant execute on function public."Qest_web"(text,jsonb) to authenticated;
--- Qest_store e as tabelas continuam inacessíveis diretamente aos usuários.
 notify pgrst, 'reload schema';
 commit;
+select instrument->>'version' as versao_instrumento, instrument#>>'{questions,q27,type}' as tipo_q27
+from public."Qest_web_config" where singleton;

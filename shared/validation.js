@@ -15,7 +15,7 @@ export function validateAnswers(answers, instrument) {
       if (!allowed.includes(a.value)) fail(400, 'Código de alternativa inválido.');
     } else if (type === 'multiple') {
       // Mantém compatibilidade com respostas escalares dos instrumentos anteriores.
-      if (['q20', 'q11.1', 'q19'].includes(id) && Number.isInteger(a.value) && q.options.some(o => o.value === a.value)) continue;
+      if (['q20', 'q11.1', 'q19', 'q27'].includes(id) && Number.isInteger(a.value) && q.options.some(o => o.value === a.value)) continue;
       if (!Array.isArray(a.value) || a.value.some(v => !q.options.some(o => o.value === v))) fail(400, 'Alternativas inválidas.');
     } else if (type === 'integer') {
       if (!Number.isSafeInteger(a.value) || a.value < 0) fail(400, 'Informe um número inteiro não negativo.');

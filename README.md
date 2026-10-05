@@ -27,7 +27,7 @@ Abra **http://localhost:3000**. Para parar, pressione `Ctrl+C` no terminal do se
 - Retomada na posição anterior, ajustes de fonte, revisão por bloco e conclusão em modo somente leitura.
 - Questões comuns podem ficar em branco. Somente as perguntas de continuidade precisam de Sim para avançar.
 - Alterar uma resposta não apaga complementos de outras respostas. Campos complementares preenchidos permanecem visíveis mesmo após trocar a alternativa principal.
-- Q11.1, Q19, Q20, Q37 e Q48 aceitam múltiplas alternativas. Q31 permite selecionar múltiplos eventos após Sim.
+- Q11.1, Q19, Q20, Q27, Q37 e Q48 aceitam múltiplas alternativas. Q31 permite selecionar múltiplos eventos após Sim.
 
 ### Saltos autorizados — versão 1.3
 
@@ -44,7 +44,7 @@ Abra **http://localhost:3000**. Para parar, pressione `Ctrl+C` no terminal do se
 
 Nos saltos acionados por Não, uma resposta em branco não é tratada como Não. As regras valem para avançar, voltar, revisar e retomar. O progresso e a revisão consideram apenas as questões aplicáveis; a consulta e a impressão identificam questões puladas. Respostas preenchidas anteriormente não são apagadas quando uma questão passa a ser pulada.
 
-Entrevistas encerradas antes da atualização mantêm a versão registrada e suas respostas originais, inclusive escolhas escalares. Entrevistas em andamento passam à versão 1.3 no próximo salvamento. A consulta e a impressão de entrevistas encerradas na versão 1.2 conservam a antiga regra da Q7.
+Entrevistas encerradas antes da atualização mantêm a versão registrada e suas respostas originais, inclusive escolhas escalares. Entrevistas em andamento passam à versão 1.4 no próximo salvamento. A consulta e a impressão de entrevistas encerradas na versão 1.2 conservam a antiga regra da Q7.
 
 ## Exclusão reversível
 
@@ -88,6 +88,8 @@ A versão 1.1 incorpora as duas instruções recebidas em 02/10/2026:
 2. Permitir múltiplas escolhas na Q48, incluindo complemento em “Outras”.
 
 A versão 1.3 corrige Q7.1 para abrir somente após Sim e permite múltiplas escolhas em Q11.1 e Q19. Mantém os demais saltos, maior contraste, impressão, importação e a redação “Se a resposta for Não, a entrevista será interrompida…”.
+
+A versão 1.4 permite múltiplas respostas na Q27, mantendo o complemento “Outra” e a leitura de respostas antigas com uma única opção. No Supabase, aplique `sql/007_Qest_q27_multiplas_respostas.sql`. Importações das versões anteriores, incluindo 1.3, continuam aceitas.
 
 O texto integral de cada questão pode ser consultado durante a entrevista. Rótulos dos campos e diagramação separam alternativas e espaços de resposta sem mudar os códigos. A marca gráfica da interface é uma identificação tipográfica, não o brasão oficial da UFRR.
 

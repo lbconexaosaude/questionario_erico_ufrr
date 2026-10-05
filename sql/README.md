@@ -21,6 +21,8 @@ O segundo arquivo deve retornar:
 
 ## Tabelas e isolamento
 
+Para permitir **várias respostas na Q27**, execute **`007_Qest_q27_multiplas_respostas.sql`**. O resultado esperado é `versao_instrumento = 1.4` e `tipo_q27 = multiple`. A atualização preserva as respostas antigas e suas versões; entrevistas em andamento recebem a versão atual no próximo salvamento. Se já aplicou os anteriores, execute somente o 007. O comando `npm run sql:web` também gera essa migração.
+
 Para habilitar **Excluir / Restaurar**, execute inteiro **`006_Qest_exclusao_reversivel.sql`** após 001 e 003. Se já usa o site, não precisa repetir os SQLs anteriores. O resultado é `exclusao_reversivel_instalada = true`. A migração adiciona campos de exclusão e atualiza as duas RPCs sem apagar dados. Toda conta autorizada da pesquisa pode excluir e restaurar. A operação exige a revisão atual do registro e registra a data/conta da exclusão. A restauração limpa esses campos e preserva o código, as respostas, a conta criadora e a situação original. Registros excluídos continuam reservando seu código e suas chaves de importação, evitando reimportação duplicada. A consulta continua disponível, mas edição, estatísticas, exportação e impressão ficam bloqueadas até restaurar.
 
 `npm run sql:web` gera 003 e 006; o SQL 006 reutiliza as funções de 001 e do template web para mantê-las consistentes. O servidor local recebe a mesma funcionalidade; no SQLite a atualização das colunas acontece automaticamente ao iniciar.

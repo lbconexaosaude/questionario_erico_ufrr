@@ -155,7 +155,7 @@ export function prepareImport({ cells }, instrument, flow, validateAnswers) {
       const interviewer = empty(r.interviewer) ? '' : String(r.interviewer);
       if (interviewer.length > 200) throw new Error('Aplicador deve ter até 200 caracteres.');
       const version = empty(r.instrument_version) ? instrument.version : String(r.instrument_version);
-      if (!['1.0-original', '1.1', '1.2', instrument.version].includes(version)) throw new Error('Versão de instrumento desconhecida.');
+      if (!['1.0-original', '1.1', '1.2', '1.3', instrument.version].includes(version)) throw new Error('Versão de instrumento desconhecida.');
       rows.push({ line: index + 1, code, interviewer, status, position, instrument_version: version, answers,
         started_at: dateValue(r.started_at, 'started_at'), updated_at: dateValue(r.updated_at, 'updated_at'), ended_at: dateValue(r.ended_at, 'ended_at') });
     } catch (e) { errors.push({ line: index + 1, message: e.message }); }

@@ -12,7 +12,7 @@ export function buildFlow(instrument) {
   return steps;
 }
 
-export function isApplicable(id, answers = {}, version = '1.3') {
+export function isApplicable(id, answers = {}, version = '1.4') {
   const value = key => answers[key]?.value;
   if (id === 'q7.1') return value('q7') === (version === '1.2' ? 0 : 1);
   if (id === 'q11.1') return value('q11') === 1;

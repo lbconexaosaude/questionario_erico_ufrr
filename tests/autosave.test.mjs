@@ -118,8 +118,8 @@ test('limpar resposta local preserva alterações remotas de outras perguntas', 
   assert.deepEqual(mergeAnswers({ q1: { value: 'Antes' } }, { q1: {} }, { q1: { value: 'Remoto' }, q2: { value: 40 } }), { q1: {}, q2: { value: 40 } });
 });
 
-test('Q11.1 e Q19 aceitam múltiplas alternativas e respostas escalares anteriores', () => {
-  for (const id of ['q11.1', 'q19']) {
+test('Q11.1, Q19 e Q27 aceitam múltiplas alternativas e respostas escalares anteriores', () => {
+  for (const id of ['q11.1', 'q19', 'q27']) {
     assert.doesNotThrow(() => validateAnswers({ [id]: { value: [1, 2] } }));
     assert.doesNotThrow(() => validateAnswers({ [id]: { value: 1 } }));
     assert.throws(() => validateAnswers({ [id]: { value: [999] } }));

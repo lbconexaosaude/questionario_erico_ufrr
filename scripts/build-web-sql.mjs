@@ -37,3 +37,22 @@ select exists(select 1 from information_schema.columns where table_schema='publi
 `;
 fs.writeFileSync(new URL('../sql/006_Qest_exclusao_reversivel.sql',import.meta.url),deletionSql);
 console.log('SQL de exclusão reversível gerado.');
+const q27Sql = `-- Q27 com múltiplas respostas, instrumento ${instrument.version}.
+-- Execute TODO este arquivo após a instalação do acesso web (SQL 003).
+-- Preserva entrevistas, respostas antigas e objetos dos outros sites. Pode ser reaplicado.
+begin;
+update public."Qest_web_config" set instrument = jsonb_set(
+  jsonb_set(instrument, '{questions,q27,type}', '"multiple"'::jsonb),
+  '{version}', '"${instrument.version}"'::jsonb
+) where singleton;
+${functionSql(sql,'Qest_validate_answers')}
+${functionSql(sql,'Qest_web')}
+revoke all on function public."Qest_validate_answers"(jsonb), public."Qest_web"(text,jsonb) from public, anon, authenticated;
+grant execute on function public."Qest_web"(text,jsonb) to authenticated;
+notify pgrst, 'reload schema';
+commit;
+select instrument->>'version' as versao_instrumento, instrument#>>'{questions,q27,type}' as tipo_q27
+from public."Qest_web_config" where singleton;
+`;
+fs.writeFileSync(new URL('../sql/007_Qest_q27_multiplas_respostas.sql',import.meta.url),q27Sql);
+console.log('SQL de múltiplas respostas da Q27 gerado.');

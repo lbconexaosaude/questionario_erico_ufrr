@@ -41,7 +41,7 @@ begin
     if typ = any(array['single','events','religion']) then
       if not ((q->'options') @> jsonb_build_array(v)) then raise sqlstate 'PT400' using message='Invalid choice'; end if;
     elsif typ = 'multiple' then
-      if k = any(array['q11.1','q19','q20']) and (q->'options') @> jsonb_build_array(v) then continue; end if;
+      if k = any(array['q11.1','q19','q20','q27']) and (q->'options') @> jsonb_build_array(v) then continue; end if;
       if jsonb_typeof(v) is distinct from 'array' then raise sqlstate 'PT400' using message='Invalid multiple choice'; end if;
       for item in select value from jsonb_array_elements(v) loop
         if not ((q->'options') @> jsonb_build_array(item)) then raise sqlstate 'PT400' using message='Invalid choice'; end if;
@@ -133,7 +133,7 @@ begin
     if p_operation = 'duplicates' then return public."Qest_store"('duplicates',p_payload); end if;
     for row_data in select value from jsonb_array_elements(p_payload->'rows') loop
       if jsonb_typeof(row_data) is distinct from 'object'
-        or coalesce(row_data->>'instrument_version','') not in ('1.0-original','1.1','1.2',config->>'version')
+        or coalesce(row_data->>'instrument_version','') not in ('1.0-original','1.1','1.2','1.3',config->>'version')
         or coalesce(row_data->>'fingerprint','') !~ '^[a-f0-9]{64}$'
         or coalesce(row_data->>'code','') !~ '^[A-Za-z0-9_.-]{0,100}$'
         or length(coalesce(row_data->>'interviewer','')) > 200

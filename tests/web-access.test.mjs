@@ -50,7 +50,7 @@ test('Pages: acesso autenticado, isolamento de outros sites, validação no banc
   for(const table of ['Qest_interviews','Qest_responses','Qest_access','Qest_web_config']) await assert.rejects(()=>pg.query(`select * from public."${table}"`),/permission denied/);
   await assert.rejects(()=>pg.query(`select public."Qest_store"('list','{}')`),/permission denied/);
   let record=await rpc('create',{interviewer:'Aplicador web',instrument_version:'malicious'});
-  assert.equal(record.instrument_version,'1.3');
+  assert.equal(record.instrument_version,'1.4');
   const save=body=>rpc('save',{id:record.id,revision:record.revision,position:2,answers:{opening:{value:1}},...body});
   await assert.rejects(()=>save({answers:{opening:{value:1},q4:{value:999}}}),e=>e.code==='PT400');
   await assert.rejects(()=>save({answers:{opening:{value:1},q2:{value:1.5}}}),e=>e.code==='PT400');

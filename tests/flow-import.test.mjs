@@ -27,7 +27,7 @@ test('todos os saltos: ida, volta, perguntas em branco e checkpoint obrigatório
   assert.equal(flow[movePosition(flow, position('q25'), answers)].id, 'checkpoint');
   assert.equal(flow[movePosition(flow, position('checkpoint'), answers, -1)].id, 'q25');
   assert.equal(flow[normalizePosition(flow, position('q26'), answers)].id, 'checkpoint');
-  for (const id of ['q11.1', 'q19', 'q20']) assert.equal(instrument.questions.find(q => q.id === id).type, 'multiple');
+  for (const id of ['q11.1', 'q19', 'q20', 'q27']) assert.equal(instrument.questions.find(q => q.id === id).type, 'multiple');
   assert.equal(isApplicable('q7.1', { q7: { value: 0 } }, '1.2'), true, 'Consulta histórica conserva a regra original');
 });
 
