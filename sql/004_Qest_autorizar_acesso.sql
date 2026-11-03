@@ -9,7 +9,9 @@ do $$
 declare
   v_emails text[] := array[
     'lucivaldobarroso.dev@gmail.com',
-    'macedogoncalves@hotmail.com'
+    'macedogoncalves@hotmail.com',
+    'denisestudy1904@gmail.com',
+    'ligoskiz@gmail.com'
   ];
   v_email text;
 begin

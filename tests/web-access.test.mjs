@@ -8,12 +8,13 @@ test('SQL 004: lista de e-mails, reaplicação e rollback quando falta uma conta
   const pg = new PGlite(); t.after(()=>pg.close());
   await pg.exec(`create schema auth; create table auth.users(email text,email_confirmed_at timestamptz);
     create table public."Qest_access"(email text primary key,active boolean);
-    insert into auth.users values ('lucivaldobarroso.dev@gmail.com',now()),('macedogoncalves@hotmail.com',now());
+    insert into auth.users values ('lucivaldobarroso.dev@gmail.com',now()),('macedogoncalves@hotmail.com',now()),
+      ('denisestudy1904@gmail.com',now()),('ligoskiz@gmail.com',now());
     insert into public."Qest_access" values ('anterior@example.test',true),('lucivaldobarroso.dev@gmail.com',false);`);
   const sql=fs.readFileSync(new URL('../sql/004_Qest_autorizar_acesso.sql',import.meta.url),'utf8');
   await pg.exec(sql); await pg.exec(sql);
   let result=await pg.query('select * from public."Qest_access" order by email');
-  assert.equal(result.rows.length,3); assert.ok(result.rows.every(r=>r.active));
+  assert.equal(result.rows.length,5); assert.ok(result.rows.every(r=>r.active));
   await pg.exec(`update auth.users set email_confirmed_at=null where email='macedogoncalves@hotmail.com';
     update public."Qest_access" set active=false where email='lucivaldobarroso.dev@gmail.com';`);
   await assert.rejects(()=>pg.exec(sql),/macedogoncalves@hotmail.com/);
